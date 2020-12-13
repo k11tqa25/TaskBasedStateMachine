@@ -8,17 +8,6 @@ Task-Based State Machine 是用來解決一般使用 While + Switch 來做 State
 3.	**提供錯誤處理機制。** 此錯誤處理機制讓此 State Machine 可以在預期或非預期例外發生時，安全結束 State Machine，並且可以做相對應的處理。
 4.	**不同 TBSM 之間串聯。** 當流程過於龐大時，可以拆成許多小的流程再彼此串聯。 便於將流程模組化。
 
-
-# 程式路徑
-
-目前於 SVN 上的位置如下:
-
-**http://yoosap.youngoptics.com/svn/nvs/DotNet Plugin/TaskBasedStateMachine**
-
-此 Library 程式的進入點位於 TaskBasedStateMachine/TaskBasedStateMachineTest/TaskBasedStateMachineTest.sln。為此程式庫的範例。 
-TaskBasedStateMachineLibrary 在編譯後的輸出路徑為 **./OutputDlls**。
-
-
 # 使用說明
 ## DLL 參考
 使用時只需參考 **TaskBasedStateMachineLibrary.dll** 即可。
