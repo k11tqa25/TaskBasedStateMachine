@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30204.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskBasedStateMachineTest", "TaskBasedStateMachineTest.csproj", "{723B34CA-46D7-4936-B9CC-25D048255E0D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskBasedStateMachineLibrary", "..\TaskBasedStateMachineLibrary\TaskBasedStateMachineLibrary.csproj", "{C0154DBF-D730-4CA1-80E4-F7C6ED2B587A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{723B34CA-46D7-4936-B9CC-25D048255E0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{723B34CA-46D7-4936-B9CC-25D048255E0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{723B34CA-46D7-4936-B9CC-25D048255E0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{723B34CA-46D7-4936-B9CC-25D048255E0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0154DBF-D730-4CA1-80E4-F7C6ED2B587A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0154DBF-D730-4CA1-80E4-F7C6ED2B587A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0154DBF-D730-4CA1-80E4-F7C6ED2B587A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0154DBF-D730-4CA1-80E4-F7C6ED2B587A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {06249406-04A4-4BA4-A297-ABD7B8D5CFB8}
+	EndGlobalSection
+EndGlobal

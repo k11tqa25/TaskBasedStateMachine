@@ -1,0 +1,398 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TaskBasedStateMachineLibrary</name>
+    </assembly>
+    <members>
+        <member name="T:TaskBasedStateMachineLibrary.TaskBasedStateMachineBaseClass">
+            <summary>
+            The base class of the <see cref="N:TaskBasedStateMachineLibrary"/>.
+            </summary>
+        </member>
+        <member name="P:TaskBasedStateMachineLibrary.TaskBasedStateMachineBaseClass.InitialTask">
+            <summary>
+            The protected keyword of the key indicating the value is the initial task.
+            </summary>
+        </member>
+        <member name="P:TaskBasedStateMachineLibrary.TaskBasedStateMachineBaseClass.ExceptionTask">
+            <summary>
+            The protected keyword of the key indicating the value is the exception task.
+            </summary>
+        </member>
+        <member name="P:TaskBasedStateMachineLibrary.TaskBasedStateMachineBaseClass.UnhandledExceptionTask">
+            <summary>
+            The protected keyword of the key indicating the value is the unhandled exception task.
+            </summary>
+        </member>
+        <member name="P:TaskBasedStateMachineLibrary.TaskBasedStateMachineBaseClass.CurrentTaskName">
+            <summary>
+            When building up the task flow, this will always point at the last task (new added) of the flow, <br></br>
+            However, when running the task flow, this will point at the task that is running.
+            </summary>
+        </member>
+        <member name="P:TaskBasedStateMachineLibrary.TaskBasedStateMachineBaseClass.Flow">
+            <summary>
+            The dictionary to control the flow. <br></br>
+            The key is the task name <br></br>
+            The value is the task list followed by the key task.<br></br><br></br>
+            <strong> NOTICE: SEQUENCE MATTERS !! </strong> 
+            The first task being added is the default sequence of the flow.
+            </summary>
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.TaskBasedStateMachineBaseClass.#ctor">
+            <summary>
+            The constructor
+            </summary>
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.TaskBasedStateMachineBaseClass.StartWith(System.String)">
+            <summary>
+            The initial task of the flow. This should be used in the very beginning.<br></br>
+            <br></br>
+            <strong>NOTE: ONLY USE THIS ONCE!! If you use this in the conditional flow, you'll screw up everything.</strong>
+            </summary>
+            <param name="taskName">The name of the task</param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.TaskBasedStateMachineBaseClass.FollowedBy(System.String)">
+            <summary>
+            The task that follows the current task.
+            </summary>
+            <param name="taskName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.TaskBasedStateMachineBaseClass.FollowedByASeriesOfTasks(TaskBasedStateMachineLibrary.TaskBasedStateMachineBaseClass)">
+            <summary>
+            A series of tasks that follow the current task. 
+            </summary>
+            <param name="taskSeries">Another task based state machine object that contains a certain flow of tasks. 
+            This will not override the exsiting initial task and exception task.</param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.TaskBasedStateMachineBaseClass.ConditionalFlow(TaskBasedStateMachineLibrary.TaskBasedStateMachineBaseClass[])">
+            <summary>
+            Set up the conditional flow for the current tasks. <br></br>
+            The current task pointer will point to the last task of the last added task case.
+            </summary>
+            <param name="taskCases">The task flow to be added. It should be bunch of series of tasks. See <see cref="T:TaskBasedStateMachineLibrary.TaskBasedStateMachineBaseClass"/></param>
+            <returns></returns>
+        </member>
+        <member name="T:TaskBasedStateMachineLibrary.ListExtensions">
+            <summary>
+            The extention class for <see cref="T:System.Collections.Generic.List`1"/>
+            </summary>
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.ListExtensions.JoinWith``1(System.Collections.Generic.List{``0},System.String)">
+            <summary>
+            Join the item in the list with a deliminator.
+            </summary>
+            <typeparam name="T">The type of the list.</typeparam>
+            <param name="list">The list.</param>
+            <param name="deliminator">The deliminator that concatenate the items.</param>
+            <returns>Returns a string</returns>
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.ListExtensions.PopFromStart``1(System.Collections.Generic.List{``0})">
+            <summary>
+            Pop the list form the start as a queue.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="list"></param>
+            <returns>Returns the popped item.</returns>
+        </member>
+        <member name="T:TaskBasedStateMachineLibrary.GraphvizHelper">
+            <summary>
+            A static helper class for running the dot.exe to create the flow chart. 
+            </summary>
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.GraphvizHelper.Run(System.String,System.String)">
+            <summary>
+            Draw the graph as an image.
+            See more details in Graphviz website at: https://graphviz.org/about/ 
+            </summary>
+            <param name="dot">The string that can interpret by dot.exe. See more details in Graphviz website at: https://graphviz.org/about/ </param>
+            <param name="saveImageFilename">Save the image to this filename. Leave it empty if you don't want to save the image.</param>
+            <returns>Returns a <see cref="T:System.Drawing.Image"/></returns>
+        </member>
+        <member name="T:TaskBasedStateMachineLibrary.GraphvizHelper.Graphviz">
+            <summary>
+            Renders an image directly
+            </summary>
+        </member>
+        <member name="F:TaskBasedStateMachineLibrary.GraphvizHelper.Graphviz.LIB_GVC">
+            <summary>
+             The location of the gvc.dll
+            </summary>
+        </member>
+        <member name="F:TaskBasedStateMachineLibrary.GraphvizHelper.Graphviz.LIB_GRAPH">
+            <summary>
+            The location of the cgraph.dll
+            </summary>
+        </member>
+        <member name="F:TaskBasedStateMachineLibrary.GraphvizHelper.Graphviz.SUCCESS">
+            <summary>
+            Is render successful?
+            </summary>
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.GraphvizHelper.Graphviz.gvContext">
+            
+            Creates a new Graphviz context.
+            
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.GraphvizHelper.Graphviz.gvFreeContext(System.IntPtr)">
+            
+            Releases a context's resources.
+            
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.GraphvizHelper.Graphviz.agmemread(System.String)">
+            
+            Reads a graph from a string.
+            
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.GraphvizHelper.Graphviz.agclose(System.IntPtr)">
+            
+            Releases the resources used by a graph.
+            
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.GraphvizHelper.Graphviz.gvLayout(System.IntPtr,System.IntPtr,System.String)">
+            
+            Applies a layout to a graph using the given engine.
+            
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.GraphvizHelper.Graphviz.gvFreeLayout(System.IntPtr,System.IntPtr)">
+            
+            Releases the resources used by a layout.
+            
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.GraphvizHelper.Graphviz.gvRenderFilename(System.IntPtr,System.IntPtr,System.String,System.String)">
+            
+            Renders a graph to a file.
+            
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.GraphvizHelper.Graphviz.gvRenderData(System.IntPtr,System.IntPtr,System.String,System.IntPtr@,System.Int32@)">
+            
+            Renders a graph in memory.
+            
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.GraphvizHelper.Graphviz.gvFreeRenderData(System.IntPtr)">
+            
+            Release render resources.
+            
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.GraphvizHelper.Graphviz.RenderImage(System.String,System.String)">
+            <summary>
+            Render the source to the image
+            </summary>
+            <param name="source">The string to run the dot.exe.</param>
+            <param name="format">The image output format.</param>
+            <returns></returns>
+        </member>
+        <member name="E:TaskBasedStateMachineLibrary.GraphvizHelper.OnErrorOccurs">
+            <summary>
+            Fires whenever an error occurs.
+            </summary>
+        </member>
+        <member name="T:TaskBasedStateMachineLibrary.IParameterClass">
+            <summary>
+            The interface that contains certain crucial properties that needs to be pass in as a parameter. <br></br>
+            Implement this for your parameter class.
+            </summary>
+        </member>
+        <member name="P:TaskBasedStateMachineLibrary.IParameterClass.NextState">
+            <summary>
+            The name of the next task. <br></br><br></br>
+            <strong>NOTE: This will be automatically set to the next state (which is the first index in the list that follows the current state) before the current state starts running. </strong>
+            <br></br>
+            That is, you don't need to set this value if there is only one case followed by the current state. <br></br>
+            Set this value if there are multiple cases followed by the current state.
+            </summary>
+        </member>
+        <member name="P:TaskBasedStateMachineLibrary.IParameterClass.cancellationToken">
+            <summary>
+            The <see cref="T:System.Threading.CancellationToken"/> that is used to abort the task.
+            </summary>
+        </member>
+        <member name="T:TaskBasedStateMachineLibrary.TaskBasedStateMachineLibraryConfiguration">
+            <summary>
+            The configuration of this <see cref="N:TaskBasedStateMachineLibrary"/>
+            </summary>
+        </member>
+        <member name="P:TaskBasedStateMachineLibrary.TaskBasedStateMachineLibraryConfiguration.OverrideDebugFile">
+            <summary>
+            Override the existing debug file (TaskBasedStateMachineLog.log)? <br></br>
+            Default is false;
+            </summary>
+        </member>
+        <member name="P:TaskBasedStateMachineLibrary.TaskBasedStateMachineLibraryConfiguration.SaveDebugFile">
+            <summary>
+            Save the debug file (TaskBasedStateMachineLog.log)?
+            Default is true;
+            </summary>
+        </member>
+        <member name="T:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1">
+            <summary>
+            The class that help you the build the flow of the tasks and run the flow asynchronously. <br></br><br></br>
+            NOTE: You'll need to use the <c>SetupTasks()</c> to setup all the tasks you'll need first, 
+            and then setup the flow of those tasks you have assigned. 
+            The tasks will be stored with their task name, so that you may arrange the flow with their names.
+            </summary>
+        </member>
+        <member name="F:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1.mTasks">
+            <summary>
+            A dictionary that stores all functions by its name. The function takes in and returns a <see cref="T:TaskBasedStateMachineLibrary.IParameterClass"/>
+            This is set to private so that user cannot modify this object directly.
+            Instead, modify it through SetupTasks method.
+            </summary>
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1.#ctor">
+            <summary>
+            When you new up a TaskBasedStateMachine, it's log information will be saved in a 
+            "TaskBasedStateMachineLog.log" file under the current application directory.
+            </summary>
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1.SetupTasks(System.Collections.Generic.List{System.ValueTuple{System.String,System.Func{`0,`0}}})">
+            <summary>
+            Setup the tasks before building the flow of the tasks 
+            </summary>
+            <param name="tasks">A <see cref="T:System.Collections.Generic.IEnumerable`1"/> object that contains a tuple with a task name and the task function.
+            <br></br>
+            Note that the task name should be unique, 
+            and the tasks function should take in a <see cref="T:System.Object"/> as an parameter (that will be passed through the whole process)
+            and return tuple of an <see cref="T:System.Int32"/> to indicate different conditions that need to go after.
+            and an <see cref="T:System.Object"/> to pass the modified object down to the next task.</param>
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1.Clear">
+            <summary>
+            Clear up all the tasks
+            </summary>
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1.StartWith(System.String)">
+            <summary>
+            The initial task of the flow. This should be used in the very beginning.<br></br>
+            <br></br>
+            <strong>NOTE: ONLY USE THIS ONCE!! If you use this in the conditional flow, you'll screw up everything.</strong>
+            </summary>
+            <param name="taskName">The name of the task</param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1.FollowedBy(System.String)">
+            <summary>
+            The task that follows the current task.
+            </summary>
+            <param name="taskName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1.FollowedByASeriesOfTasks(TaskBasedStateMachineLibrary.TaskBasedStateMachine{`0})">
+            <summary>
+            A series of tasks that follow the current task. 
+            </summary>
+            <param name="taskSeries">Another task based state machine object that contains a certain flow of tasks. 
+            This will not override the exsiting initial task and exception task.</param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1.ConditionalFlow(TaskBasedStateMachineLibrary.TaskBasedStateMachineBaseClass[])">
+            <summary>
+            Set up the conditional flow for the current tasks. <br></br>
+            The current task pointer will point to the last task of the last added task case.
+            </summary>
+            <param name="taskCases">The task flow to be added. It should be bunch of series of tasks. See <see cref="T:TaskBasedStateMachineLibrary.TaskBasedStateMachineBaseClass"/></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1.AddHandledExceptionTasks(System.String[])">
+            <summary>
+            This is a bunch of state for you to handle all the exceptions occurred in whichever state. 
+            Specify the task names and you can go to these state from all the other states when an error occurs. <br></br>
+            <br></br>
+            <strong>NOTE: The task function must be setup by using <c>SetupTask()</c> beforehand.</strong><br></br>
+            <br></br>
+            <remark>Use <c>AddUnhandledExceptionTask</c> after this method.</remark>
+            </summary>
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1.AddUnhandledExceptionTask(System.Func{`0,`0})">
+            <summary>
+            This is the state that handles a unhandled exception that is capture by this <see cref="T:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1"/> when running the tasks.<br></br>
+            It should be the last method to call and it can only be assigned once.<br></br>
+            <br></br>
+            <strong>NOTE: This method is usually followed by <c>AddHandledExceptionTasks</c></strong>
+            </summary>
+            <param name="func">The function of the task that takes in an object as the parameter and returns a tuple of (int, object)</param>
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1.RunAsync(`0)">
+            <summary>
+            Run the flow of the tasks asynchronously. So remember to jump back to UI thread if you try to update something on a UI.
+            </summary>
+            <param name="paramter">The parameter to pass in for every task methods. You can then unbox this parameter in your own method implementation.
+            <br></br>
+            <strong>NOTE: Highly recommend that this should also be incorporated in the parameter to stop your own methods.</strong></param>
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1.DrawDiagram(System.String,System.Boolean)">
+            <summary>
+            Draw the diagram that has been created as an Image.
+            </summary>
+            <param name="diagramTitle">The title of this diagram.</param>
+            <param name="save">Save the diagram as a png image whose filename is the application file directory + <paramref name="diagramTitle"/>.png</param>
+            <returns>Returns a <see cref="T:System.Drawing.Image"/></returns>
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1.ToString">
+            <summary>
+            Display the content of the flow as an dictioanry
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1.GetNextTaskName(System.String,TaskBasedStateMachineLibrary.IParameterClass)">
+            <summary>
+            Get the task name of the next task
+            </summary>
+            <param name="currentTask">The name of the current task</param>
+            <param name="p">The parameter that contains the name of the next step.</param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1.GetNextTaskName(System.String)">
+            <summary>
+            This is used to get the default next step
+            </summary>
+            <param name="currentTask">The name of the current task.</param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1.HandleException(System.ValueTuple{System.Object,System.Exception})">
+            <summary>
+            Handle the exception caught in this class.
+            </summary>
+            <param name="detail">The detail of the excption. It is a tuple with a sender and an exception.</param>
+        </member>
+        <member name="E:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1.OnErrorOccurs">
+            <summary>
+             Fires when an error occurs
+            </summary>
+        </member>
+        <member name="E:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1.OnStateChanged">
+            <summary>
+            Fires when state changes. 
+            </summary>
+        </member>
+        <member name="E:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1.OnTaskCourseStarted">
+            <summary>
+            Fires when the task course is started.
+            </summary>
+        </member>
+        <member name="E:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1.OnTaskCourseCompleted">
+            <summary>
+            Fires when the task course is completed. This will be fired after the <see cref="E:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1.OnTaskCourseAborted"/> event if any.
+            </summary>
+        </member>
+        <member name="E:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1.OnTaskCourseAborted">
+            <summary>
+            Fires when the task is aborted. This will be fired before the <see cref="E:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1.OnTaskCourseCompleted"/> event.
+            </summary>
+        </member>
+        <member name="T:TaskBasedStateMachineLibrary.TaskBasedStateMachineLogger">
+            <summary>
+            The logger for the <see cref="T:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1"/>. This is used to initiate the global logger for the whole <see cref="T:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1"/>.
+            When you new up a <see cref="T:TaskBasedStateMachineLibrary.TaskBasedStateMachine`1"/>, the details of the class will be store in the "TaskBasedStateMachineLog.log" file automatically.
+            </summary>
+        </member>
+        <member name="M:TaskBasedStateMachineLibrary.TaskBasedStateMachineLogger.InitiateLogger">
+            <summary>
+            Initiate the basic logger file.
+            </summary>
+        </member>
+    </members>
+</doc>

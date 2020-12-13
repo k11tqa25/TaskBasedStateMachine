@@ -1,0 +1,2198 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LoggerManagerLibrary</name>
+    </assembly>
+    <members>
+        <member name="T:LoggerManagerLibrary.AsyncAwaiter">
+            <summary>
+            Adds the ability to safely await on tasks to be complete that need limited access
+            For example, only allowing one task to access some data at a time, like the old 
+            asynchronous locks
+            
+            This awaiter uses the safer semaphore to prevent any chance of a deadlock
+            </summary>
+        </member>
+        <member name="F:LoggerManagerLibrary.AsyncAwaiter.SelfLock">
+            <summary>
+            A semaphore to lock the semaphore list
+            </summary>
+        </member>
+        <member name="F:LoggerManagerLibrary.AsyncAwaiter.Semaphores">
+            <summary>
+            A list of all semaphore locks (one per key)
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.AsyncAwaiter.AwaitResultAsync``1(System.String,System.Func{System.Threading.Tasks.Task{``0}},System.Int32)">
+            <summary>
+            Awaits for any outstanding tasks to complete that are accessing the same key then runs the given task, returning it's value
+            </summary>
+            <param name="key">The key to await</param>
+            <param name="task">The task to perform inside of the semaphore lock</param>
+            <param name="maxAccessCount">If this is the first call, sets the maximum number of tasks that can access this task before it waiting</param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.AsyncAwaiter.AwaitAsync(System.String,System.Func{System.Threading.Tasks.Task},System.Int32)">
+            <summary>
+            Awaits for any outstanding tasks to complete that are accessing the same key then runs the given task
+            </summary>
+            <param name="key">The key to await</param>
+            <param name="task">The task to perform inside of the semaphore lock</param>
+            <param name="maxAccessCount">If this is the first call, sets the maximum number of tasks that can access this task before it waiting</param>
+            <returns></returns>
+        </member>
+        <member name="T:LoggerManagerLibrary.ConditionCellStyleAttribute">
+            <summary>
+            The attribute that defines the style of a cell.
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.ConditionCellStyleAttribute.BooleanProperty">
+            <summary>
+            The boolean property that will then determine the style to use.
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.ConditionCellStyleAttribute.StyleNameIfTrue">
+            <summary>
+            The name of the style
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.ConditionCellStyleAttribute.StyleNameIfFalse">
+            <summary>
+            The name of the style
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.ConditionCellStyleAttribute.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Set a condition to a cell according to the specified property name.
+            </summary>
+            <param name="booleanPropertyName">The name of a boolean property  That will then determines the style to use. Use <paramref name="styleIfTrue"/> if True; else <paramref name="styleIfFalse"/></param>
+            <param name="styleIfTrue"></param>
+            <param name="styleIfFalse"></param>
+        </member>
+        <member name="T:LoggerManagerLibrary.DefineStyleAttribute">
+            <summary>
+            The attribute that defines a style for the ODS file.
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.DefineStyleAttribute.StyleName">
+            <summary>
+            The name of the style
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.DefineStyleAttribute.ForegroundColor">
+            <summary>
+            The foreground color of the cell. <br></br>
+            Use nameof(<see cref="T:System.Drawing.Color"/>) for the string input.
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.DefineStyleAttribute.BackgroundColor">
+            <summary>
+            The background color of the cell. <br></br>
+            Use nameof(<see cref="T:System.Drawing.Color"/>) for the string input.
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.DefineStyleAttribute.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Define the style of the header
+            </summary>
+            <param name="styleName">The name of the style. </param>
+            <param name="foreground">
+            The foreground color of the cell. <br></br>
+            Use nameof(<see cref="T:System.Drawing.Color"/>) for the string input.
+            </param>
+            <param name="background">
+            The background color of the cell. <br></br>
+            Use nameof(<see cref="T:System.Drawing.Color"/>) for the string input.
+            </param>
+        </member>
+        <member name="T:LoggerManagerLibrary.HeaderNameAttribute">
+            <summary>
+            This is used to change the default name of the header.<br></br>
+            The default name is the property name itself.
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.HeaderNameAttribute.HeaderName">
+            <summary>
+            The name of the header
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.HeaderNameAttribute.#ctor(System.String)">
+            <summary>
+            Rename the header
+            </summary>
+            <param name="headerName">The name of the header. </param>
+        </member>
+        <member name="T:LoggerManagerLibrary.HeaderStyleAttribute">
+            <summary>
+            The attribute that defines the style of the header
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.HeaderStyleAttribute.StyleName">
+            <summary>
+            The name of the style
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.HeaderStyleAttribute.#ctor(System.String)">
+            <summary>
+            Define the style of the header
+            </summary>
+            <param name="styleName">The name of the style. </param>
+        </member>
+        <member name="T:LoggerManagerLibrary.NewSheetAttribute">
+            <summary>
+            The attribute that helps to add a new sheet in a dataset from a class property
+            </summary>
+        </member>
+        <member name="T:LoggerManagerLibrary.SkipAttribute">
+            <summary>
+            Apply this attribute if you don't want certain property to be documented.<br></br><br></br>
+            <strong>This doesn't work on JSON logger.</strong>
+            </summary>
+        </member>
+        <member name="T:LoggerManagerLibrary.SkipHeaderAttribute">
+            <summary>
+            Apply this attribute to the property that you don't want to record its header. <br></br>
+            Usually this will be apply on a list type.
+            </summary>
+        </member>
+        <member name="T:LoggerManagerLibrary.ValueCellStyle">
+            <summary>
+            The attribute that defines the style of the cell. <br></br><br></br>
+            <strong>NOTE: This will override the <see cref="T:LoggerManagerLibrary.ConditionCellStyleAttribute"/></strong>
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.ValueCellStyle.StyleName">
+            <summary>
+            The name of the style
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.ValueCellStyle.#ctor(System.String)">
+            <summary>
+            Define the style of the value cell
+            </summary>
+            <param name="styleName">The name of the style. </param>
+        </member>
+        <member name="T:LoggerManagerLibrary.CommonFunctions">
+            <summary>
+             The common functions that' ll be used in this project
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.CommonFunctions.NormalizePath(System.String)">
+            <summary>
+            Normalizing a path based on the current operating system
+            </summary>
+            <param name="path">The path to normalize</param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.CommonFunctions.ResolvePath(System.String)">
+            <summary>
+            Resolves any relative elements of the path to absolute
+            </summary>
+            <param name="path">The path to resolve</param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.CommonFunctions.GetFilenameWithoutExtension(System.String)">
+            <summary>
+            Get the filename without the extension
+            </summary>
+            <param name="filename">The filename with our without the extension.</param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.CommonFunctions.ActivateClass``1">
+            <summary>
+            Create an instance of a class.
+            </summary>
+            <typeparam name="T">The class type</typeparam>
+            <returns></returns>
+        </member>
+        <member name="T:LoggerManagerLibrary.ColorExtensions">
+            <summary>
+            The extension methods for <see cref="T:System.Drawing.Color"/>
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.ColorExtensions.ToHexString(System.Drawing.Color)">
+            <summary>
+            Convert the <see cref="T:System.Drawing.Color"/> to hex string.
+            </summary>
+            <param name="c"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.ColorExtensions.ToRgbString(System.Drawing.Color)">
+            <summary>
+            Convert the <see cref="T:System.Drawing.Color"/> to RGB string.
+            </summary>
+            <param name="c"></param>
+            <returns></returns>
+        </member>
+        <member name="T:LoggerManagerLibrary.DataTableExtensions">
+            <summary>
+            A class that contains the extension methods for the data table specifically.
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.DataTableExtensions.SetCellValue``1(System.Data.DataTable,System.Int32,System.Int32,``0)">
+            <summary>
+            Write a value to cell at a given row and column
+            </summary>
+            <typeparam name="T">The value type of the value</typeparam>
+            <param name="table">Extension method for DataTable</param>
+            <param name="col">The column of the cell</param>
+            <param name="row">The row of the cell</param>
+            <param name="value">The value to write</param>
+        </member>
+        <member name="M:LoggerManagerLibrary.DataTableExtensions.InsertRowAt(System.Data.DataTable,System.Int32)">
+            <summary>
+            Insert a new row to the table
+            </summary>
+            <param name="table"></param>
+            <param name="row">The index of the row to insert to.</param>
+        </member>
+        <member name="M:LoggerManagerLibrary.DataTableExtensions.ToDataset``1(``0)">
+            <summary>
+            Convert a class object to a dataset.
+            </summary>
+            <param name="classInstance">The class object to be convert. </param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.DataTableExtensions.ToDatasetStyle``1(``0,System.Collections.Generic.HashSet{System.String})">
+            <summary>
+            Convert a class object to a dataset whose cells contains the style name to apply on.
+            </summary>
+            <param name="classInstance">The class object to be convert. </param>
+            <param name="definedStyles">A set of style names that has been defined.</param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.DataTableExtensions.GetTable(System.Data.DataTableCollection,System.String)">
+            <summary>
+            Get the specified table if exist. Return null if the table name doesn't exist.
+            </summary>
+            <param name="tables"></param>
+            <param name="tableName">The name of the table.</param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.DataTableExtensions.SaveToTextFile(System.Data.DataTable,System.String,System.Boolean)">
+            <summary>
+            Save a <see cref="T:System.Data.DataTable"/> to a text file. 
+            </summary>
+            <param name="dt">The data table to be converted.</param>
+            <param name="filename">The output filename.</param>
+            <param name="displayColumnNames">Display column names.</param>
+        </member>
+        <member name="M:LoggerManagerLibrary.DataTableExtensions.SaveToCsvFile(System.Data.DataTable,System.String,System.Boolean)">
+            <summary>
+            Save a <see cref="T:System.Data.DataTable"/> to a csv file. 
+            </summary>
+            <param name="dt">The data table to be converted.</param>
+            <param name="filename">The output filename.</param>
+            <param name="displayColumnNames">Display column names.</param>
+        </member>
+        <member name="T:LoggerManagerLibrary.AbstractLoggerFactory">
+            <summary>
+            The abstract class for the logger factory
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.AbstractLoggerFactory.Filename">
+            <summary>
+            The filename the save/read the file. <br></br>
+            <strong>NOTE: Do not need to include the filename extension.</strong>
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.AbstractLoggerFactory.FactoryName">
+            <summary>
+            The name of this factory
+            </summary>
+        </member>
+        <member name="T:LoggerManagerLibrary.BaseBasicLoggerFactory">
+            <summary>
+            The base of the <see cref="T:LoggerManagerLibrary.BasicLoggerFactory"/>
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.BaseBasicLoggerFactory.LogOutputLevel">
+            <summary>
+            The level of logging to output
+            </summary>
+        </member>
+        <member name="E:LoggerManagerLibrary.BaseBasicLoggerFactory.NewLog">
+            <summary>
+            Fires when a new log is added
+            </summary>
+        </member>
+        <member name="E:LoggerManagerLibrary.BaseBasicLoggerFactory.ErrorOccurs">
+            <summary>
+            Fires when an error occurs
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.BaseBasicLoggerFactory.Build">
+            <summary>
+            Build this logger
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.BaseBasicLoggerFactory.Log(System.String,LoggerManagerLibrary.LogLevel,System.String,System.String,System.Int32)">
+            <summary>
+            Log it.
+            </summary>
+            <param name="message">The message to log.</param>
+            <param name="level">The level of the message. <see cref="T:LoggerManagerLibrary.LogLevel"/></param>
+            <param name="origin">The method/function this message was logged in</param>
+            <param name="filePath">The code filename that this message was logged from</param>
+            <param name="lineNumber">The line of code in the filename this message was logged from</param>
+        </member>
+        <member name="T:LoggerManagerLibrary.BaseResultLoggerFactory">
+            <summary>
+            The base class for the <see cref="T:LoggerManagerLibrary.ResultLoggerFactory`1"/>.
+            </summary>
+        </member>
+        <member name="E:LoggerManagerLibrary.BaseResultLoggerFactory.ErrorOccurs">
+            <summary>
+            Fires when an error occurs.
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.BaseResultLoggerFactory.Build">
+            <summary>
+            Build this logger
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.BaseResultLoggerFactory.GetFilenames">
+            <summary>
+            Get all the filenames in the Factory
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.BaseResultLoggerFactory.Save">
+            <summary>
+            Save the result logger files
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:LoggerManagerLibrary.BaseSettingsLoggerFactory">
+            <summary>
+            The base class of the <see cref="T:LoggerManagerLibrary.SettingsLoggerFactory`1"/>.
+            </summary>
+        </member>
+        <member name="E:LoggerManagerLibrary.BaseSettingsLoggerFactory.ErrorOccurs">
+            <summary>
+            Fires when an error occurs
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.BaseSettingsLoggerFactory.Build">
+            <summary>
+            Build this logger
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.BaseSettingsLoggerFactory.Read">
+            <summary>
+            Read the settings file
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.BaseSettingsLoggerFactory.Save">
+            <summary>
+            Save the settings file
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:LoggerManagerLibrary.BasicLoggerFactory">
+            <summary>
+            The factory that log all the basic informations, warnings, errors.
+            </summary>
+        </member>
+        <member name="F:LoggerManagerLibrary.BasicLoggerFactory.mLoggers">
+            <summary>
+            The list of loggers in this factory
+            </summary>
+        </member>
+        <member name="F:LoggerManagerLibrary.BasicLoggerFactory.mLoggersLock">
+            <summary>
+            A lock for the logger list to keep it thread-safe
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.BasicLoggerFactory.#ctor">
+            <summary>
+            The constructor
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.BasicLoggerFactory.Build">
+            <summary>
+            Build thils factory.
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.BasicLoggerFactory.UseConsoleLogger">
+            <summary>
+            Add a console logger to the logger list.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.BasicLoggerFactory.UseFileLogger(System.String)">
+            <summary>
+            Add a file logger to the logger list.
+            </summary>
+            <param name="filename">The filename to save the file.</param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.BasicLoggerFactory.UseDebugLogger">
+            <summary>
+            This method can only be used in this library. This is specifically used for saving the debug logger file for this library.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.BasicLoggerFactory.UseCustomFunctionAsyncLogger(System.Action{System.String})">
+            <summary>
+            Add a custom function async logger to the logger list. Use this to handle any customized function to log your message.
+            <br></br><br></br>
+            <strong>NOTE: Handle the UI-related function carefully. You'll need to jump back to UI thread if any.</strong>
+            </summary>
+            <param name="action">The custom action.</param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.BasicLoggerFactory.Log(System.String,LoggerManagerLibrary.LogLevel,System.String,System.String,System.Int32)">
+            <summary>
+            Logs the specific message to all loggers in this factory
+            </summary>
+            <param name="message">The message to log</param>
+            <param name="level">The level of the message being logged</param>
+            <param name="origin">The method/function this message was logged in</param>
+            <param name="filePath">The code filename that this message was logged from</param>
+            <param name="lineNumber">The line of code in the filename this message was logged from</param>
+        </member>
+        <member name="M:LoggerManagerLibrary.BasicLoggerFactory.HandleExceptions(System.Object,System.Exception)">
+            <summary>
+            A helper function to handle all the exceptions
+            </summary>
+            <param name="sender"></param>
+            <param name="ex"></param>
+        </member>
+        <member name="M:LoggerManagerLibrary.BasicLoggerFactory.AddLogger(LoggerManagerLibrary.IBasicLogger)">
+            <summary>
+            Adds the specific logger to this factory
+            </summary>
+            <param name="logger">The logger</param>
+        </member>
+        <member name="M:LoggerManagerLibrary.BasicLoggerFactory.RemoveLogger(LoggerManagerLibrary.IBasicLogger)">
+            <summary>
+            Removes the specified logger from this factory
+            </summary>
+            <param name="logger">The logger</param>
+        </member>
+        <member name="E:LoggerManagerLibrary.BasicLoggerFactory.NewLog">
+            <summary>
+            Fires whenever a new log arrives
+            </summary>
+        </member>
+        <member name="E:LoggerManagerLibrary.BasicLoggerFactory.ErrorOccurs">
+            <summary>
+            Fires whenever an error occurs
+            </summary>
+        </member>
+        <member name="T:LoggerManagerLibrary.ResultLoggerFactory`1">
+            <summary>
+            The factory that handles the work for the result logger.
+            </summary>
+            <typeparam name="TClass">The class type of the result logger.</typeparam>
+        </member>
+        <member name="F:LoggerManagerLibrary.ResultLoggerFactory`1.mResultLoggers">
+            <summary>
+            The list of result loggers in this factory
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.ResultLoggerFactory`1.ResultClassInstance">
+            <summary>
+            The class instance to store the result and then it'll be serialized to any format the user choose.
+            This is used as an reference that would be passed in to all the result loggers.
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.ResultLoggerFactory`1.#ctor(System.String)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="filename">The filename of the result file. Do not append the extention filename.</param>
+        </member>
+        <member name="M:LoggerManagerLibrary.ResultLoggerFactory`1.GetFilenames">
+            <summary>
+            Get all the filenames from the result loggers.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.ResultLoggerFactory`1.Save">
+            <summary>
+            Save the result.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.ResultLoggerFactory`1.HandleExceptions(System.Object,System.Exception)">
+            <summary>
+            A helper function to handle all the exceptions
+            </summary>
+            <param name="sender"></param>
+            <param name="ex"></param>
+        </member>
+        <member name="M:LoggerManagerLibrary.ResultLoggerFactory`1.UseTextFileLoggerFactory(System.String,System.Boolean)">
+            <summary>
+            Add a text result logger to the result logger list.
+            </summary>
+            <returns></returns>
+            <param name="filenameExtension">Apply any filename extension you need besides ".txt". </param>
+            <param name="displayColumnNames">Display the name of the columns.</param>
+        </member>
+        <member name="M:LoggerManagerLibrary.ResultLoggerFactory`1.UseIniFileLoggerFactory">
+            <summary>
+            Add an ini result logger to the result logger list.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.ResultLoggerFactory`1.UseJsonResultLogger(System.String)">
+            <summary>
+            Add a json result logger to the result logger list
+            </summary>
+            <returns></returns>
+            <param name="schema">The schema to validate a json file while reading. <br></br>
+            Refer to https://www.newtonsoft.com/jsonschema to see how to specify a schema for JSON file in C#. </param>
+        </member>
+        <member name="M:LoggerManagerLibrary.ResultLoggerFactory`1.UseLibreOfficeResultLogger(System.String)">
+            <summary>
+            Add a libre office result logger to the result logger list
+            </summary>
+            <param name="templateFilename">The template ods file to refer to. The file shouldn't be password protected.</param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.ResultLoggerFactory`1.Build">
+            <summary>
+            Build this factory
+            </summary>
+        </member>
+        <member name="E:LoggerManagerLibrary.ResultLoggerFactory`1.ErrorOccurs">
+            <summary>
+             The error event that fires when an error occurs.
+            </summary>
+        </member>
+        <member name="T:LoggerManagerLibrary.SettingsLoggerFactory`1">
+            <summary>
+            The factory that handles the setting logger
+            </summary>
+            <typeparam name="TClass">The settings class type</typeparam>
+        </member>
+        <member name="F:LoggerManagerLibrary.SettingsLoggerFactory`1._instance">
+            <summary>
+            A private instance to ensure that there is always a thing to return.
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.SettingsLoggerFactory`1.SettingsClassInstance">
+            <summary>
+            The instance of the class
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.SettingsLoggerFactory`1.SettingsLogger">
+            <summary>
+            The specific settings logger for this factory
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.SettingsLoggerFactory`1.#ctor(System.String)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="filename">The filename of the result file. Do not append the extention filename.</param>
+        </member>
+        <member name="M:LoggerManagerLibrary.SettingsLoggerFactory`1.Build">
+            <summary>
+            Build this logger.
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.SettingsLoggerFactory`1.Read">
+            <summary>
+            Read the settings file.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.SettingsLoggerFactory`1.Save">
+            <summary>
+            Save the settings file
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.SettingsLoggerFactory`1.HandleExceptions(System.Object,System.Exception)">
+            <summary>
+            A helper function to handle all the exceptions
+            </summary>
+            <param name="sender"></param>
+            <param name="ex"></param>
+        </member>
+        <member name="M:LoggerManagerLibrary.SettingsLoggerFactory`1.UseBuiltInFormatSettingsLoffer(LoggerManagerLibrary.SettingsFileFormat,System.String)">
+            <summary>
+            Use a settings logger with built-in format.
+            </summary>
+            <param name="format">The format of the logger.</param>
+            <param name="schema">The schema that will be used to validate the settings file when read. Leave it null if you don't need it.</param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.SettingsLoggerFactory`1.UseCustomSettingsLogger(LoggerManagerLibrary.ISettingsLogger{`0})">
+            <summary>
+            Implement a <see cref="T:LoggerManagerLibrary.ISettingsLogger`1"/> of your own and pass in to the logger. <br></br>
+            It'll help you to create an instance of <see cref="P:LoggerManagerLibrary.SettingsLoggerFactory`1.SettingsClassInstance"/> and register the <c>ErrorOccurs</c> event for your custom setting logger. 
+            </summary>
+            <param name="customSettingsLogger"></param>
+        </member>
+        <member name="E:LoggerManagerLibrary.SettingsLoggerFactory`1.ErrorOccurs">
+            <summary>
+            Fires when an error occurs.
+            </summary>
+        </member>
+        <member name="T:LoggerManagerLibrary.FileManager">
+            <summary>
+            Handles reading/writing and querying the file system
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.FileManager.WriteTextToFileAsync(System.String,System.String,System.Boolean)">
+            <summary>
+            Writes the text to the specified file
+            </summary>
+            <param name="text">The text to write</param>
+            <param name="path">The path of the file to write to</param>
+            <param name="append">If true, writes the text to the end of the file, otherwise overrides any existing file</param>
+            <returns></returns>
+        </member>
+        <member name="T:LoggerManagerLibrary.InternalFileManager">
+            <summary>
+            Handles reading/writing and querying the file system
+            This is specifically use for logging the debug message of this <see cref="N:LoggerManagerLibrary"/> itself.
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.InternalFileManager.WriteTextToFileAsync(System.String,System.String,System.Boolean)">
+            <summary>
+            Writes the text to the specified file
+            </summary>
+            <param name="text">The text to write</param>
+            <param name="path">The path of the file to write to</param>
+            <param name="append">If true, writes the text to the end of the file, otherwise overrides any existing file</param>
+            <returns></returns>
+        </member>
+        <member name="T:LoggerManagerLibrary.IniFileHelper">
+            <summary>
+            The helper for the initial files
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.IniFileHelper.Filename">
+            <summary>
+            The filename of the file
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.IniFileHelper.setKeyValue(System.String,System.String,System.String)">
+            <summary>
+            Set the value to the key.
+            </summary>
+            <param name="IN_Section">Section。</param>
+            <param name="IN_Key">Key。</param>
+            <param name="IN_Value">Value。</param>
+        </member>
+        <member name="M:LoggerManagerLibrary.IniFileHelper.getKeyValue(System.String,System.String)">
+            <summary>
+            Get the value for the key.
+            </summary>
+            <param name="IN_Section">Section。</param>
+            <param name="IN_Key">Key。</param>
+        </member>
+        <member name="M:LoggerManagerLibrary.IniFileHelper.getKeyValue(System.String,System.String,System.String)">
+            <summary>
+            Get the value for the key. Return a specified default value if the value doesn't exist.
+            </summary>
+            <param name="Section">Section。</param>
+            <param name="Key">Key。</param>
+            <param name="DefaultValue">DefaultValue。</param>
+        </member>
+        <member name="M:LoggerManagerLibrary.IniFileHelper.GetSection(System.String)">
+            <summary>
+            Get all the key value pairs for a specific section.
+            </summary>
+            <param name="section">The section.</param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.IniFileHelper.ToIniFile``1(``0)">
+            <summary>
+            Convert a class object to the ini file. <br></br><br></br>
+            <strong>Does NOT support List type</strong>
+            </summary>
+            <param name="classInstance">The class object to be convert. </param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.IniFileHelper.FromIniFile``1(``0)">
+            <summary>
+            Convert a class object from the ini file. <br></br><br></br>
+            <strong>Does NOT support List type</strong>
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="classInstance"></param>
+            <returns></returns>
+        </member>
+        <member name="T:LoggerManagerLibrary.CellStyle">
+            <summary>
+            A class that defines the style of a cell
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.CellStyle.ForegroundColor">
+            <summary>
+             The foreground color (text color) of the cell
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.CellStyle.BackgroundColor">
+            <summary>
+            The background color of the cell
+            </summary>
+        </member>
+        <member name="T:LoggerManagerLibrary.LibreOfficeHelper">
+            <summary>
+            A helper class for Libre Office
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.LibreOfficeHelper.OpenLibreOffice(System.String)">
+            <summary>
+            Open a ods file
+            </summary>
+            <param name="inputFilename">The file to open.</param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.LibreOfficeHelper.ReadOdsFile(System.String)">
+            <summary>
+            Reads a .ods file and store it in a <see cref="T:System.Data.DataSet"/>.
+            </summary>
+            <param name="inputFilename">Path to the .ods file.</param>
+            <returns><see cref="T:System.Data.DataSet"/> that represents .ods file.</returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.LibreOfficeHelper.WriteToOdsFile(System.Data.DataSet,System.String,System.String,System.Data.DataSet)">
+            <summary>
+            Writes a <see cref="T:System.Data.DataSet"/> as a .ods file.
+            </summary>
+            <param name="odsFile"><see cref="T:System.Data.DataSet"/> that represent .ods file.</param>
+            <param name="outputFilename">The name of the file to save to.</param>
+            <param name="templateFilename">The template ods file to reference to.</param>
+            <param name="styleDataset">The dataset that contains the style info of each cell.</param>
+        </member>
+        <member name="M:LoggerManagerLibrary.LibreOfficeHelper.CreateStyleTemplate(System.Collections.Generic.Dictionary{System.String,LoggerManagerLibrary.CellStyle},System.String,System.String)">
+            <summary>
+            Add styles to the a new template file. You should then save content to this new template file. <br></br>
+            <strong>Do not save the new template to the same template file.</strong>
+            </summary>
+            <param name="styleDictionary">The dictionary that contains the name of the style and the <see cref="T:LoggerManagerLibrary.CellStyle"/></param>
+            <param name="templateFilename">The filepath of the template.</param>
+            <param name="newTemplateFilename">The filepath of the new template.</param>
+        </member>
+        <member name="T:LoggerManagerLibrary.IBasicLogger">
+            <summary>
+            A logger that will handle log messages from a <see cref="T:LoggerManagerLibrary.IBasicLoggerFactory"/>
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.IBasicLogger.Log(System.String,LoggerManagerLibrary.LogLevel)">
+            <summary>
+            Handles the logged message being passed in
+            </summary>
+            <param name="message">The message being log</param>
+            <param name="level">The level of the log message</param>
+        </member>
+        <member name="T:LoggerManagerLibrary.IBasicLoggerFactory">
+            <summary>
+            Holds a bunch of loggers to log messages for the user
+            </summary>
+        </member>
+        <member name="E:LoggerManagerLibrary.IBasicLoggerFactory.NewLog">
+            <summary>
+            Fires whenever a new log arrives
+            </summary>
+        </member>
+        <member name="E:LoggerManagerLibrary.IBasicLoggerFactory.ErrorOccurs">
+            <summary>
+            Fires whenever a error occurs
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.IBasicLoggerFactory.Build">
+            <summary>
+            Build the factory. This could function as a constructor.
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.IBasicLoggerFactory.Log(System.String,LoggerManagerLibrary.LogLevel,System.String,System.String,System.Int32)">
+            <summary>
+            Logs the specific message to all loggers in this factory
+            </summary>
+            <param name="message">The message to log</param>
+            <param name="level">The level of the message being logged</param>
+            <param name="origin">The method/function this message was logged in</param>
+            <param name="filePath">The code filename that this message was logged from</param>
+            <param name="lineNumber">The line of code in the filename this message was logged from</param>
+        </member>
+        <member name="T:LoggerManagerLibrary.IFileManager">
+            <summary>
+            Handles reading/writing and querying the file system
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.IFileManager.WriteTextToFileAsync(System.String,System.String,System.Boolean)">
+            <summary>
+            Writes the text to the specified file
+            </summary>
+            <param name="text">The text to write</param>
+            <param name="path">The path of the file to write to</param>
+            <param name="append">If true, writes the text to the end of the file, otherwise overrides any existing file</param>
+            <returns></returns>
+        </member>
+        <member name="T:LoggerManagerLibrary.IResultLogger`1">
+            <summary>
+            The interface of the result logger 
+            </summary>
+            <typeparam name="T">The class type of the result logger</typeparam>
+        </member>
+        <member name="P:LoggerManagerLibrary.IResultLogger`1.ResultClassInstance">
+            <summary>
+            The result class instance to specify the things to log.
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.IResultLogger`1.Filename">
+            <summary>
+             The filename of the result file.
+             <strong>DO NOT include the extension filename (i.e., .txt, .xml, ...)</strong> <br></br>
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.IResultLogger`1.Init">
+            <summary>
+            To initialize the result logger
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.IResultLogger`1.Save">
+            <summary>
+            Save the result file
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="E:LoggerManagerLibrary.IResultLogger`1.ErrorOccurs">
+            <summary>
+            The event triggered when an error occurs.
+            </summary>
+        </member>
+        <member name="T:LoggerManagerLibrary.IResultLoggerFactory">
+            <summary>
+            The interface of the result logger factory.
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.IResultLoggerFactory.Save">
+            <summary>
+            Save the result file
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.IResultLoggerFactory.GetFilenames">
+            <summary>
+            Get all the current filenames
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.IResultLoggerFactory.Build">
+            <summary>
+            Build the factory. This could function as a constructor.
+            </summary>
+        </member>
+        <member name="E:LoggerManagerLibrary.IResultLoggerFactory.ErrorOccurs">
+            <summary>
+            The error event that fires when an error occurs.
+            </summary>
+        </member>
+        <member name="T:LoggerManagerLibrary.ISettingsLogger`1">
+            <summary>
+            The interface for the settings logger
+            </summary>
+            <typeparam name="T">The type of the class</typeparam>
+        </member>
+        <member name="P:LoggerManagerLibrary.ISettingsLogger`1.SettingsClassInstance">
+            <summary>
+            The settings class instance to specify the things to log.
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.ISettingsLogger`1.Filename">
+            <summary>
+             The filename of the settings file.
+             <strong>DO NOT include the extension filename (i.e., .txt, .xml, ...)</strong> <br></br>
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.ISettingsLogger`1.Schema">
+            <summary>
+            The schema of the settings file.
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.ISettingsLogger`1.Save">
+            <summary>
+            Save the settings file
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.ISettingsLogger`1.Read">
+            <summary>
+            Read the settings file
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.ISettingsLogger`1.Build">
+            <summary>
+            Build this logger
+            </summary>
+        </member>
+        <member name="E:LoggerManagerLibrary.ISettingsLogger`1.ErrorOccurs">
+            <summary>
+            The error event that fires when an error occurs.
+            </summary>
+        </member>
+        <member name="T:LoggerManagerLibrary.ISettingsLoggerFactory">
+            <summary>
+            The interface for the settings logger factory
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.ISettingsLoggerFactory.Save">
+            <summary>
+            Save the settings file
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.ISettingsLoggerFactory.Read">
+            <summary>
+            Read the settings file
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.ISettingsLoggerFactory.Build">
+            <summary>
+            Build the settings logger
+            </summary>
+        </member>
+        <member name="E:LoggerManagerLibrary.ISettingsLoggerFactory.ErrorOccurs">
+            <summary>
+            The error event that fires when an error occurs.
+            </summary>
+        </member>
+        <member name="T:LoggerManagerLibrary.ITaskManager">
+            <summary>
+            Handles anything to do with Tasks
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.ITaskManager.Run(System.Func{System.Threading.Tasks.Task},System.String,System.String,System.Int32)">
+            <summary>
+            Queues the specified work to run on the thread pool and returns a proxy for the
+            task returned by function.
+            </summary>
+            <param name="function">The work to execute asynchronously</param>
+            <param name="origin">The method/function this message was logged in</param>
+            <param name="filePath">The code filename that this message was logged from</param>
+            <param name="lineNumber">The line of code in the filename this message was logged from</param>
+            <returns>A task that represents a proxy for the task returned by function.</returns>
+            <exception cref="T:System.ArgumentNullException">The function parameter was null.</exception>
+        </member>
+        <member name="M:LoggerManagerLibrary.ITaskManager.Run``1(System.Func{System.Threading.Tasks.Task{``0}},System.Threading.CancellationToken,System.String,System.String,System.Int32)">
+            <summary>
+            Queues the specified work to run on the thread pool and returns a proxy for the
+            Task(TResult) returned by function.
+            </summary>
+            <typeparam name="TResult">The type of the result returned by the proxy task.</typeparam>
+            <param name="function">The work to execute asynchronously</param>
+            <param name="cancellationToken">A cancellation token that should be used to cancel the work</param>
+            <param name="origin">The method/function this message was logged in</param>
+            <param name="filePath">The code filename that this message was logged from</param>
+            <param name="lineNumber">The line of code in the filename this message was logged from</param>
+            <returns>A Task(TResult) that represents a proxy for the Task(TResult) returned by function.</returns>
+            <exception cref="T:System.ArgumentNullException">The function parameter was null.</exception>
+            <exception cref="T:System.Threading.Tasks.TaskCanceledException">The task has been canceled.</exception>
+            <exception cref="T:System.ObjectDisposedException">The System.Threading.CancellationTokenSource associated with cancellationToken was disposed.</exception>
+        </member>
+        <member name="M:LoggerManagerLibrary.ITaskManager.Run``1(System.Func{System.Threading.Tasks.Task{``0}},System.String,System.String,System.Int32)">
+            <summary>
+            Queues the specified work to run on the thread pool and returns a proxy for the
+            Task(TResult) returned by function.
+            </summary>
+            <typeparam name="TResult">The type of the result returned by the proxy task.</typeparam>
+            <param name="function">The work to execute asynchronously</param>
+            <param name="origin">The method/function this message was logged in</param>
+            <param name="filePath">The code filename that this message was logged from</param>
+            <param name="lineNumber">The line of code in the filename this message was logged from</param>
+            <returns>A Task(TResult) that represents a proxy for the Task(TResult) returned by function.</returns>
+            <exception cref="T:System.ArgumentNullException">The function parameter was null.</exception>
+        </member>
+        <member name="M:LoggerManagerLibrary.ITaskManager.Run``1(System.Func{``0},System.Threading.CancellationToken,System.String,System.String,System.Int32)">
+            <summary>
+            Queues the specified work to run on the thread pool and returns a Task(TResult)
+            object that represents that work. A cancellation token allows the work to be
+            canceled.
+            </summary>
+            <typeparam name="TResult">The result type of the task.</typeparam>
+            <param name="function">The work to execute asynchronously</param>
+            <param name="cancellationToken">A cancellation token that should be used to cancel the work</param>
+            <param name="origin">The method/function this message was logged in</param>
+            <param name="filePath">The code filename that this message was logged from</param>
+            <param name="lineNumber">The line of code in the filename this message was logged from</param>
+            <returns>A Task(TResult) that represents the work queued to execute in the thread pool.</returns>
+            <exception cref="T:System.ArgumentNullException">The function parameter was null.</exception>
+            <exception cref="T:System.Threading.Tasks.TaskCanceledException">The task has been canceled.</exception>
+            <exception cref="T:System.ObjectDisposedException">The System.Threading.CancellationTokenSource associated with cancellationToken was disposed.</exception>
+        </member>
+        <member name="M:LoggerManagerLibrary.ITaskManager.Run``1(System.Func{``0},System.String,System.String,System.Int32)">
+            <summary>
+            Queues the specified work to run on the thread pool and returns a System.Threading.Tasks.Task`1
+            object that represents that work.
+            </summary>
+            <typeparam name="TResult">The return type of the task.</typeparam>
+            <param name="function">The work to execute asynchronously.</param>
+            <param name="origin">The method/function this message was logged in</param>
+            <param name="filePath">The code filename that this message was logged from</param>
+            <param name="lineNumber">The line of code in the filename this message was logged from</param>
+            <returns>A task object that represents the work queued to execute in the thread pool.</returns>
+            <exception cref="T:System.ArgumentNullException">The function parameter was null.</exception>
+        </member>
+        <member name="M:LoggerManagerLibrary.ITaskManager.Run(System.Func{System.Threading.Tasks.Task},System.Threading.CancellationToken,System.String,System.String,System.Int32)">
+            <summary>
+            Queues the specified work to run on the thread pool and returns a proxy for the
+            task returned by function.
+            </summary>
+            <param name="function">The work to execute asynchronously.</param>
+            <param name="cancellationToken">A cancellation token that should be used to cancel the work.</param>
+            <param name="origin">The method/function this message was logged in</param>
+            <param name="filePath">The code filename that this message was logged from</param>
+            <param name="lineNumber">The line of code in the filename this message was logged from</param>
+            <returns>A task that represents a proxy for the task returned by function.</returns>
+            <exception cref="T:System.ArgumentNullException">The function parameter was null.</exception>
+            <exception cref="T:System.Threading.Tasks.TaskCanceledException">The task has been canceled.</exception>
+            <exception cref="T:System.ObjectDisposedException">The System.Threading.CancellationTokenSource associated with cancellationToken was disposed.</exception>
+        </member>
+        <member name="M:LoggerManagerLibrary.ITaskManager.Run(System.Action,System.Threading.CancellationToken,System.String,System.String,System.Int32)">
+            <summary>
+            Queues the specified work to run on the thread pool and returns a System.Threading.Tasks.Task
+            object that represents that work. A cancellation token allows the work to be
+            canceled.
+            </summary>
+            <param name="action">The work to execute asynchronously</param>
+            <param name="cancellationToken">A cancellation token that can be used to cancel the work</param>
+            <param name="origin">The method/function this message was logged in</param>
+            <param name="filePath">The code filename that this message was logged from</param>
+            <param name="lineNumber">The line of code in the filename this message was logged from</param>
+            <returns>A task that represents the work queued to execute in the thread pool.</returns>
+            <exception cref="T:System.ArgumentNullException">The action parameter was null.</exception>
+            <exception cref="T:System.Threading.Tasks.TaskCanceledException">The task has been canceled.</exception>
+            <exception cref="T:System.ObjectDisposedException">The System.Threading.CancellationTokenSource associated with cancellationToken was disposed.</exception>
+        </member>
+        <member name="M:LoggerManagerLibrary.ITaskManager.Run(System.Action,System.String,System.String,System.Int32)">
+            <summary>
+            Queues the specified work to run on the thread pool and returns a System.Threading.Tasks.Task
+            object that represents that work.
+            </summary>
+            <param name="action">The work to execute asynchronously</param>
+            <param name="origin">The method/function this message was logged in</param>
+            <param name="filePath">The code filename that this message was logged from</param>
+            <param name="lineNumber">The line of code in the filename this message was logged from</param>
+            <returns>A task that represents the work queued to execute in the ThreadPool.</returns>
+            <exception cref="T:System.ArgumentNullException">The action parameter was null.</exception>
+        </member>
+        <member name="T:LoggerManagerLibrary.IoC">
+            <summary>
+            A Inversion of Control class that helps to handle the dependency injection of this logger manager.
+            </summary>
+        </member>
+        <member name="F:LoggerManagerLibrary.IoC._hasSetup">
+            <summary>
+            This is used to avoid setting up the IoC repeatedly.
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.IoC.Kernel">
+            <summary>
+            The kernel for our IoC container
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.IoC.Logger">
+            <summary>
+            A shortcut to access the <see cref="T:LoggerManagerLibrary.IBasicLogger"/>  => Outdated
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.IoC.File">
+            <summary>
+            A shortcut to access the <see cref="T:LoggerManagerLibrary.IFileManager"/>
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.IoC.Task">
+            <summary>
+            A shortcut to access the <see cref="T:LoggerManagerLibrary.ITaskManager"/>
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.IoC.#cctor">
+            <summary>
+            Sets up the IoC container, binds all information required and is ready for use
+            NOTE: Must be called as soon as your application starts up to ensure all 
+                  services can be found
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.IoC.Get``1">
+            <summary>
+            Get's a service from the IoC, of the specified type
+            </summary>
+            <typeparam name="T">The type to get</typeparam>
+            <returns></returns>
+        </member>
+        <member name="T:LoggerManagerLibrary.LoggerManagerConfiguration">
+            <summary>
+            The configuration of this <see cref="N:LoggerManagerLibrary"/>
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.LoggerManagerConfiguration.SaveDebugFile">
+            <summary>
+             Save the debug file for this <see cref="N:LoggerManagerLibrary"/>. This library will save a "LoggerManager.log" in the application path by default.<br></br>
+             Set to false if you don't want to save the debug file.
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.LoggerManagerConfiguration.OverrideDebugFile">
+            <summary>
+            Override the existing debug file ("LoggerManager.log"). <br></br>
+            It'll delete and create a new one if this value is set to true, or the debug log will append to the existing one if set to false.<br></br><br></br>
+            The default is false.
+            </summary>
+        </member>
+        <member name="T:LoggerManagerLibrary.BasicLogger">
+            <summary>
+            The basic logger of this logger manager.
+            Use this logger to log the basic informations such as warings, exceptions or other details in the console, a file, or the output in debug mode.
+            For example:
+            <example>
+            <code>
+                BasicLogger.Construct().UseFileLogger("yourFilename.txt").Build();  <br></br>
+                or <br></br>
+                BasicLogger.Construct&lt;BasicLoggerFactory&gt;().UseFileLogger("yourFilename.txt").Build(); 
+            </code>
+            </example>
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.BasicLogger.Factory">
+            <summary>
+            The Factory for the <see cref="T:LoggerManagerLibrary.BasicLoggerFactory"/>
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.BasicLogger.Log(System.String,LoggerManagerLibrary.LogLevel,System.String,System.String,System.Int32)">
+            <summary>
+            A short cut to call the logging function in the factory
+            </summary>
+            <param name="message">The message to log</param>
+            <param name="level">The level of the message being logged</param>
+            <param name="origin">The method/function this message was logged in</param>
+            <param name="filePath">The code filename that this message was logged from</param>
+            <param name="lineNumber">The line of code in the filename this message was logged from</param>
+        </member>
+        <member name="E:LoggerManagerLibrary.BasicLogger.ErrorOccurs">
+            <summary>
+             A shortcut that catch the errors sent by the factory.
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.BasicLogger.HandleExceptions(System.Object,System.Exception)">
+            <summary>
+            A helper function to handle all the exceptions
+            </summary>
+            <param name="sender"></param>
+            <param name="ex"></param>
+        </member>
+        <member name="M:LoggerManagerLibrary.BasicLogger.Construct">
+            <summary>
+            A defaul construction method that construct a <see cref="T:LoggerManagerLibrary.BasicLoggerFactory"/>
+            NOTE: This should be set by the consuming application at the very start of the program. <br></br>
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.BasicLogger.Construct``1">
+            <summary>
+            The initial call to setting up and using the BasicLogger.
+            NOTE: This should be set by the consuming application at the very start of the program. <br></br>
+            For example:
+            <example>
+            <code>
+                BasicLogger.Construct().UseFileLogger("yourFilename.txt").Build();  <br></br>
+                or <br></br>
+                BasicLogger.Construct&lt;BasicLoggerFactory&gt;().UseFileLogger("yourFilename.txt").Build(); 
+            </code>
+            </example>
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.BasicLogger.Build(LoggerManagerLibrary.BasicLoggerFactory)">
+            <summary>
+            An extension method of BasicLoggerFactory. Use this function to build the factory after constructing all the loggers that are going to be used. <br></br>
+            It comes with a <see cref="T:LoggerManagerLibrary.DebugLogger"/> by default. Current possible loggers are: <br></br>
+            <see cref="T:LoggerManagerLibrary.DebugLogger"/> : Log in the output when build the application in debug mode.
+            <see cref="T:LoggerManagerLibrary.ConsoleLogger"/> : Log in the console.
+            <see cref="T:LoggerManagerLibrary.FileLogger"/> : Log in a file.
+            </summary>
+            <param name="factory"></param>
+        </member>
+        <member name="T:LoggerManagerLibrary.ResultLogger`1">
+            <summary>
+            The result logger of this logger manager. Use this logger to log the result of a task. 
+            For example:<br></br>
+            <example>
+            <code>
+                ResultLogger&lt;YourResultDetailClass&gt;.Construct().UseJsonResultLogger("yourResultFilename").Build();  <br></br>
+            </code>
+            </example>
+            </summary>
+            <typeparam name="TClass">The class object that contains the structure of the result.</typeparam>
+        </member>
+        <member name="P:LoggerManagerLibrary.ResultLogger`1.ResultFactory">
+            <summary>
+            The factory that handles all the work
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.ResultLogger`1.Instance">
+            <summary>
+             A shortcut property to access the result class instance in the result factory.
+            </summary>
+        </member>
+        <member name="E:LoggerManagerLibrary.ResultLogger`1.ErrorOccurs">
+            <summary>
+             A shortcut that catch the errors sent by the factory.
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.ResultLogger`1.Save">
+            <summary>
+            A shortcut to call the save function in the ResultFactory
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.ResultLogger`1.GetFilenames">
+            <summary>
+            A shortcut to call the GetFilenames method in the ResultFactory
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.ResultLogger`1.HandleExceptions(System.Object,System.Exception)">
+            <summary>
+            A helper function to handle all the exceptions
+            </summary>
+            <param name="sender"></param>
+            <param name="ex"></param>
+        </member>
+        <member name="M:LoggerManagerLibrary.ResultLogger`1.Construct(System.String)">
+            <summary>
+            To construct the factory. 
+            NOTE: This should be set by the consuming application at the very start of the program. <br></br>
+            </summary>
+            <param name="filename">The filename of the result file. (path included) <br></br>
+            NOTE:  Do not include the extension filename.</param>
+            <returns></returns>
+        </member>
+        <member name="T:LoggerManagerLibrary.SettingsLogger`1">
+            <summary>
+            The defaut settings logger of this logger manager. Use this logger to setup your settings.
+            A noticable differenct between this logger and the other two is that <br></br>
+            in the DefualtSettingsLoggerFactory, you can only use ONE format to read / write the settings file.
+            </summary>
+            <typeparam name="TClass">The class object that contains the details of the settings.</typeparam>
+        </member>
+        <member name="P:LoggerManagerLibrary.SettingsLogger`1.SettingsLoggerFactory">
+            <summary>
+             The factory of that handles all the work
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.SettingsLogger`1.Instance">
+            <summary>
+             A shortcut property to access the default settings class instance in the settings factory.
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.SettingsLogger`1.Save">
+            <summary>
+             A shortcut to save the settings
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.SettingsLogger`1.Read">
+            <summary>
+            A shortcut to read the settings
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.SettingsLogger`1.HandleExceptions(System.Object,System.Exception)">
+            <summary>
+            A helper function to handle all the exceptions
+            </summary>
+            <param name="sender"></param>
+            <param name="ex"></param>
+        </member>
+        <member name="E:LoggerManagerLibrary.SettingsLogger`1.ErrorOccurs">
+            <summary>
+             A shortcut that catch the errors sent by the factory.
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.SettingsLogger`1.Construct(System.String)">
+            <summary>
+            To construct the factory. 
+            NOTE: This should be set by the consuming application at the very start of the program. <br></br>
+            </summary>
+            <param name="filename">The filename of the settings file. (path included) <br></br>
+            NOTE:  Do not include the extension filename.</param>
+            <returns></returns>
+        </member>
+        <member name="T:LoggerManagerLibrary.MultiBasicLoggers">
+            <summary>
+            Use this class if you need to have multiple basic loggers for different scenarios.
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.MultiBasicLoggers.Factories">
+            <summary>
+            A dictionary of <see cref="T:LoggerManagerLibrary.BasicLoggerFactory"/>. The key is the name of the factory.
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiBasicLoggers.Log(System.String,System.String,LoggerManagerLibrary.LogLevel,System.String,System.String,System.Int32)">
+            <summary>
+            A short cut to call the logging function for a specific logger
+            </summary>
+            <param name="factoryName"></param>
+            <param name="message">The message to log</param>
+            <param name="level">The level of the message being logged</param>
+            <param name="origin">The method/function this message was logged in</param>
+            <param name="filePath">The code filename that this message was logged from</param>
+            <param name="lineNumber">The line of code in the filename this message was logged from</param>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiBasicLoggers.AddFactory(System.String,LoggerManagerLibrary.BasicLoggerFactory)">
+            <summary>
+            Add and build a factory dynamically.         
+            This is a helpful function for some scenarios where you need to add another <see cref="T:LoggerManagerLibrary.BasicLoggerFactory"/> in the run time. <br></br>
+            <br></br>
+            <strong> NOTE: Please be sure that you have already initiated the Factories by constructing one.  Or it'll throw a <see cref="T:System.NullReferenceException"/></strong>
+            </summary>
+            <param name="factoryName">The name of the factory</param>
+            <param name="factory">A <see cref="T:LoggerManagerLibrary.BasicLoggerFactory"/></param>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiBasicLoggers.RemoveFactory(System.String)">
+            <summary>
+            Remove a factory dynamically. 
+            This is a helpful function for some scenarios where you need to remove a <see cref="T:LoggerManagerLibrary.BasicLoggerFactory"/> in the run time. <br></br>
+            <br></br>
+            <strong> NOTE: Please be sure that you have already initiated the Factories by constructing one.  Or it'll throw a <see cref="T:System.NullReferenceException"/></strong>
+            </summary>
+            <param name="factoryName">The name of the factory. It'll be the class you passed in to <see cref="T:LoggerManagerLibrary.BasicLoggerFactory"/> by default.</param>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiBasicLoggers.HandleExceptions(System.Object,System.Exception)">
+            <summary>
+            A helper function to handle all the exceptions
+            </summary>
+            <param name="sender"></param>
+            <param name="ex"></param>
+        </member>
+        <member name="E:LoggerManagerLibrary.MultiBasicLoggers.ErrorOccurs">
+            <summary>
+            Fires when an error occurs.
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiBasicLoggers.Construct">
+            <summary>
+             Construct the Factories.<br></br>
+             <br></br>
+            <strong>NOTE: This needs to be called first before adding any factory.</strong>
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiBasicLoggers.AddFactory(System.Collections.Generic.Dictionary{System.String,LoggerManagerLibrary.BasicLoggerFactory},System.String,LoggerManagerLibrary.BasicLoggerFactory)">
+            <summary>
+            Add a result factory to the dictionary after constructing the Factories.
+            New up a <see cref="T:LoggerManagerLibrary.ResultLoggerFactory`1"/>, use the format you need, but do not need to build.
+            </summary>
+            <param name="dictionary">The dictionary to add (Extention). </param>
+            <param name="name">Give a name for the factory.</param>
+            <param name="factory">The factory to add.</param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiBasicLoggers.Build(System.Collections.Generic.Dictionary{System.String,LoggerManagerLibrary.BasicLoggerFactory})">
+            <summary>
+            Build all the factorys in the Factories
+            </summary>
+            <param name="factory"></param>
+        </member>
+        <member name="T:LoggerManagerLibrary.MultiResultLoggers">
+            <summary>
+            Use this class if you need to save multiple results with different contents.
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.MultiResultLoggers.Factories">
+            <summary>
+            A dictionary of <see cref="T:LoggerManagerLibrary.ResultLoggerFactory`1"/>
+            The key is meant to be the class name of the result class type.
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiResultLoggers.Save(System.String)">
+            <summary>
+            A shortcut method to save the file for a specific factory
+            </summary>
+            <param name="factoryName">The name of the factory that needs to perform this function</param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiResultLoggers.SaveAll">
+            <summary>
+            A shortcut method to save all the factories in the Factories
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiResultLoggers.GetAllFactoryNames">
+            <summary>
+            A shortcut to get all the factory names in the Factories
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiResultLoggers.Instance``1">
+            <summary>
+            A shortcut to get the instance of the specific factory
+            </summary>
+            <typeparam name="TClass">The class type of that specific factory</typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiResultLoggers.AddFactory(LoggerManagerLibrary.BaseResultLoggerFactory)">
+            <summary>
+            Add and build a factory dynamically. <br></br>
+            This is a helpful function for some scenarios where you need to add another <see cref="T:LoggerManagerLibrary.ResultLoggerFactory`1"/> in the run time. <br></br>
+            <br></br>
+            <strong> NOTE: Please be sure that you have already initiated the Factories by constructing one.  Or it'll throw a <see cref="T:System.NullReferenceException"/></strong>
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiResultLoggers.RemoveFactory(System.String)">
+            <summary>
+            Remove a factory dynamically. 
+            This is a helpful function for some scenarios where you need to remove a <see cref="T:LoggerManagerLibrary.ResultLoggerFactory`1"/> in the run time. <br></br>
+            <br></br>
+            <strong> NOTE: Please be sure that you have already initiated the Factories by constructing one.  Or it'll throw a <see cref="T:System.NullReferenceException"/></strong>
+            </summary>
+            <param name="factoryName">The name of the factory. It'll be the class you passed in to <see cref="T:LoggerManagerLibrary.ResultLoggerFactory`1"/> by default.</param>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiResultLoggers.HandleExceptions(System.Object,System.Exception)">
+            <summary>
+            A helper function to handle all the exceptions
+            </summary>
+            <param name="sender"></param>
+            <param name="ex"></param>
+        </member>
+        <member name="E:LoggerManagerLibrary.MultiResultLoggers.ErrorOccurs">
+            <summary>
+            Fires when an error occurs.
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiResultLoggers.Construct">
+            <summary>
+             Construct the Factories.<br></br>
+             <br></br>
+            <strong>NOTE: This needs to be called first before adding any factory.</strong>
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiResultLoggers.AddFactory(System.Collections.Generic.Dictionary{System.String,LoggerManagerLibrary.BaseResultLoggerFactory},LoggerManagerLibrary.BaseResultLoggerFactory)">
+            <summary>
+            Add a result factory to the dictionary after constructing the Factories. <br></br>
+            New up a <see cref="T:LoggerManagerLibrary.ResultLoggerFactory`1"/> and add all the result loggers you need with builder functions.
+            </summary>
+            <param name="dictionary">The dictionary to add (Extention). </param>
+            <param name="factory">The factory to add.</param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiResultLoggers.Build(System.Collections.Generic.Dictionary{System.String,LoggerManagerLibrary.BaseResultLoggerFactory})">
+            <summary>
+            Build all the factorys in the Factories
+            </summary>
+            <param name="factory"></param>
+        </member>
+        <member name="T:LoggerManagerLibrary.MultiSettingsLoggers">
+            <summary>
+            Use this class if you need to use multiple settings with different contents.
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.MultiSettingsLoggers.Factories">
+            <summary>
+            A dictionary of <see cref="T:LoggerManagerLibrary.SettingsLoggerFactory`1"/> 
+            The key is meant to be the class name of the settings class type. <br></br>
+            <br></br>
+            <strong>NOTE: Construct the factory first before using this factory.</strong>
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiSettingsLoggers.Save(System.String)">
+            <summary>
+            A shortcut method to save the file for a specific factory
+            </summary>
+            <param name="factoryName">The name of the factory that needs to perform this function</param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiSettingsLoggers.SaveAll">
+            <summary>
+            A shortcut method to save all the factories in the Factories
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiSettingsLoggers.Read(System.String)">
+            <summary>
+            A shortcut method to read the file for a specific factory
+            </summary>
+            <param name="factoryName">The name of the factory that needs to perform this function</param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiSettingsLoggers.ReadAll">
+            <summary>
+            A shortcut to read all the factories in the Factories
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiSettingsLoggers.GetAllFactoryNames">
+            <summary>
+            A shortcut to get all the factory names in the Factories
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiSettingsLoggers.Instance``1">
+            <summary>
+            A shortcut to get the instance of the specific factory
+            </summary>
+            <typeparam name="TClass">The class type of that specific factory</typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiSettingsLoggers.AddFactory(LoggerManagerLibrary.BaseSettingsLoggerFactory)">
+            <summary>
+            Add and build a factory dynamically.         
+            This is a helpful function for some scenarios where you need to add another <see cref="T:LoggerManagerLibrary.SettingsLoggerFactory`1"/> in the run time. <br></br>
+            <br></br>
+            <strong> NOTE: Please be sure that you have already initiated the Factories by constructing one.  Or it'll throw a <see cref="T:System.NullReferenceException"/></strong>
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiSettingsLoggers.RemoveFactory(System.String)">
+            <summary>
+            Remove a factory dynamically. 
+            This is a helpful function for some scenarios where you need to remove a <see cref="T:LoggerManagerLibrary.SettingsLoggerFactory`1"/> in the run time. <br></br>
+            <br></br>
+            <strong> NOTE: Please be sure that you have already initiated the Factories by constructing one.  Or it'll throw a <see cref="T:System.NullReferenceException"/></strong>
+            </summary>
+            <param name="factoryName">The name of the factory. It'll be the class you passed in to <see cref="T:LoggerManagerLibrary.SettingsLoggerFactory`1"/> by default.</param>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiSettingsLoggers.HandleExceptions(System.Object,System.Exception)">
+            <summary>
+            A helper function to handle all the exceptions
+            </summary>
+            <param name="sender"></param>
+            <param name="ex"></param>
+        </member>
+        <member name="E:LoggerManagerLibrary.MultiSettingsLoggers.ErrorOccurs">
+            <summary>
+            Fires when an error occurs.
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiSettingsLoggers.Construct">
+            <summary>
+             Construct the Factories.<br></br>
+             <br></br>
+            <strong>NOTE: This needs to be called first before adding any factory.</strong>
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiSettingsLoggers.AddFactory(System.Collections.Generic.Dictionary{System.String,LoggerManagerLibrary.BaseSettingsLoggerFactory},LoggerManagerLibrary.BaseSettingsLoggerFactory)">
+            <summary>
+            Add a settings logger factory to the dictionary after constructing the Factories. <br></br>
+            New up a <see cref="T:LoggerManagerLibrary.SettingsLogger`1"/>, select a format you need, but do not need to build.
+            </summary>
+            <param name="dictionary">The dictionary to add (Extention). </param>
+            <param name="factory">The factory to add.</param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.MultiSettingsLoggers.Build(System.Collections.Generic.Dictionary{System.String,LoggerManagerLibrary.BaseSettingsLoggerFactory})">
+            <summary>
+            Build all the factorys in the dictionary
+            </summary>
+            <param name="factory"></param>
+        </member>
+        <member name="T:LoggerManagerLibrary.LogOutputLevel">
+            <summary>
+            The level of details to output for a logger
+            </summary>
+        </member>
+        <member name="F:LoggerManagerLibrary.LogOutputLevel.Debug">
+            <summary>
+            Logs everything
+            </summary>
+        </member>
+        <member name="F:LoggerManagerLibrary.LogOutputLevel.Verbose">
+            <summary>
+            Lot all information except debug information
+            </summary>
+        </member>
+        <member name="F:LoggerManagerLibrary.LogOutputLevel.Informative">
+            <summary>
+            Logs all informative message, ignoring any debug and verbose messages
+            </summary>
+        </member>
+        <member name="F:LoggerManagerLibrary.LogOutputLevel.Critical">
+            <summary>
+            Log only critical errors and warnings and success, but no general information
+            </summary>
+        </member>
+        <member name="F:LoggerManagerLibrary.LogOutputLevel.Nothing">
+            <summary>
+            The logger will never output anything
+            </summary>
+        </member>
+        <member name="T:LoggerManagerLibrary.LogLevel">
+            <summary>
+            The severity of the log message
+            </summary>
+        </member>
+        <member name="F:LoggerManagerLibrary.LogLevel.Debug">
+            <summary>
+            Developer-specific information
+            </summary>
+        </member>
+        <member name="F:LoggerManagerLibrary.LogLevel.Verbose">
+            <summary>
+            Verbose information
+            </summary>
+        </member>
+        <member name="F:LoggerManagerLibrary.LogLevel.Informative">
+            <summary>
+            General information
+            </summary>
+        </member>
+        <member name="F:LoggerManagerLibrary.LogLevel.Warning">
+            <summary>
+            A warning
+            </summary>
+        </member>
+        <member name="F:LoggerManagerLibrary.LogLevel.Error">
+            <summary>
+            An error
+            </summary>
+        </member>
+        <member name="F:LoggerManagerLibrary.LogLevel.Success">
+            <summary>
+            A success
+            </summary>
+        </member>
+        <member name="T:LoggerManagerLibrary.ConsoleLogger">
+            <summary>
+            Logs the messages to the Console
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.ConsoleLogger.Log(System.String,LoggerManagerLibrary.LogLevel)">
+            <summary>
+            Logs the given message to the system Console
+            </summary>
+            <param name="message">The message to log</param>
+            <param name="level">The level of the message</param>
+        </member>
+        <member name="T:LoggerManagerLibrary.CustomFunctionAsyncLogger">
+            <summary>
+            A basic logger that allows you to pass in a customized logging method and run it asynchonously.
+            <br></br><br></br>
+            <strong>NOTE: Handle the UI-related function carefully. You'll need to jump back to UI thread if any.</strong>
+            </summary>
+        </member>
+        <member name="F:LoggerManagerLibrary.CustomFunctionAsyncLogger.LogAction">
+            <summary>
+            Store the action.
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.CustomFunctionAsyncLogger.#ctor(System.Action{System.String})">
+            <summary>
+            The constructor.
+            </summary>
+            <param name="logAction">The action to log. It takes a string as an parameter.</param>
+        </member>
+        <member name="M:LoggerManagerLibrary.CustomFunctionAsyncLogger.Log(System.String,LoggerManagerLibrary.LogLevel)">
+            <summary>
+            Log function
+            </summary>
+            <param name="message">The message to log.</param>
+            <param name="level">The level of the message.</param>
+        </member>
+        <member name="M:LoggerManagerLibrary.CustomFunctionAsyncLogger.LogAsync(System.String)">
+            <summary>
+            Run the action asynchronously.
+            </summary>
+            <param name="msg"></param>
+        </member>
+        <member name="T:LoggerManagerLibrary.DebugLogger">
+            <summary>
+            Logs the messages to the Debug log
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.DebugLogger.Log(System.String,LoggerManagerLibrary.LogLevel)">
+            <summary>
+            Logs the given message to the system Console
+            </summary>
+            <param name="message">The message to log</param>
+            <param name="level">The level of the message</param>
+        </member>
+        <member name="T:LoggerManagerLibrary.FileLogger">
+            <summary>
+            Logs to a specific file
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.FileLogger.FilePath">
+            <summary>
+            The path to write the log file to
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.FileLogger.LogTime">
+            <summary>
+            If true, logs the current time with each message
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.FileLogger.#ctor(System.String)">
+            <summary>
+            Default constructor
+            </summary>
+            <param name="filePath">The path to log to</param>
+        </member>
+        <member name="M:LoggerManagerLibrary.FileLogger.Log(System.String,LoggerManagerLibrary.LogLevel)">
+            <summary>
+            Log it.
+            </summary>
+            <param name="message">The message to log.</param>
+            <param name="level">The level of the message. <see cref="T:LoggerManagerLibrary.LogLevel"/></param>
+        </member>
+        <member name="T:LoggerManagerLibrary.InternalFileLogger">
+            <summary>
+            Logs to the debug file for this library
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.InternalFileLogger.FilePath">
+            <summary>
+            The path to write the log file to
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.InternalFileLogger.LogTime">
+            <summary>
+            If true, logs the current time with each message
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.InternalFileLogger.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+            <param name="filePath">The path to log to</param>
+        </member>
+        <member name="M:LoggerManagerLibrary.InternalFileLogger.Log(System.String,LoggerManagerLibrary.LogLevel)">
+            <summary>
+            Log it.
+            </summary>
+            <param name="message">The message to log.</param>
+            <param name="level">The level of the message. <see cref="T:LoggerManagerLibrary.LogLevel"/></param>
+        </member>
+        <member name="T:LoggerManagerLibrary.IniFileResultLogger`1">
+            <summary>
+            The result logger with ini format. <br></br>
+            <br></br>
+            <strong>NOTE: The ini format does NOT support List type.</strong>
+            </summary>
+            <typeparam name="T">The class type of the result logger.</typeparam>
+        </member>
+        <member name="P:LoggerManagerLibrary.IniFileResultLogger`1.ResultClassInstance">
+            <summary>
+            The instance of the class
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.IniFileResultLogger`1.Filename">
+            <summary>
+            The filename of the result logger.
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.IniFileResultLogger`1.#ctor(`0,System.String)">
+            <summary>
+            The constructor
+            </summary>
+            <param name="resultClassInstance">The instance of the class</param>
+            <param name="filename">The filename of the result logger. DO NOT append the filename extension.</param>
+        </member>
+        <member name="M:LoggerManagerLibrary.IniFileResultLogger`1.Init">
+            <summary>
+            Initialize the logger
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.IniFileResultLogger`1.Save">
+            <summary>
+            Save the logger
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.IniFileResultLogger`1.HandleExceptions(System.Object,System.Exception)">
+            <summary>
+            A helper function to handle all the exceptions
+            </summary>
+            <param name="sender"></param>
+            <param name="ex"></param>
+        </member>
+        <member name="E:LoggerManagerLibrary.IniFileResultLogger`1.ErrorOccurs">
+            <summary>
+            Fires when an error occurs.
+            </summary>
+        </member>
+        <member name="T:LoggerManagerLibrary.JsonResultLogger`1">
+            <summary>
+            The result logger with JSON format.
+            </summary>
+            <typeparam name="T">The class type of the result logger.</typeparam>
+        </member>
+        <member name="P:LoggerManagerLibrary.JsonResultLogger`1.ResultClassInstance">
+            <summary>
+            The instance of the class
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.JsonResultLogger`1.Filename">
+            <summary>
+            The filename of the result logger.
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.JsonResultLogger`1.Schema">
+            <summary>
+            The schema to validate a json file when read. 
+            Refer to Json.NET Schema to see how to specify a schema for JSON file in C#.
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.JsonResultLogger`1.#ctor(`0,System.String,System.String)">
+            <summary>
+            The constructor
+            </summary>
+            <param name="resultClassInstance">The instance of the class</param>
+            <param name="filename">The filename of the result logger. DO NOT append the filename extension.</param>
+            <param name="schema">The schema for the validation. Leave it null if not needed.</param>
+        </member>
+        <member name="M:LoggerManagerLibrary.JsonResultLogger`1.Init">
+            <summary>
+            Initialize the logger
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.JsonResultLogger`1.Save">
+            <summary>
+            Save the logger
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.JsonResultLogger`1.HandleExceptions(System.Object,System.Exception)">
+            <summary>
+            A helper function to handle all the exceptions
+            </summary>
+            <param name="sender"></param>
+            <param name="ex"></param>
+        </member>
+        <member name="E:LoggerManagerLibrary.JsonResultLogger`1.ErrorOccurs">
+            <summary>
+            Fires whenever an error occurs
+            </summary>
+        </member>
+        <member name="T:LoggerManagerLibrary.LibreOfficeOdsResultLogger`1">
+            <summary>
+            The result logger class for logging in LibreOffice ODS file format.
+            </summary>
+            <typeparam name="T">The class type of the result logger</typeparam>
+        </member>
+        <member name="P:LoggerManagerLibrary.LibreOfficeOdsResultLogger`1.ResultClassInstance">
+            <summary>
+            The instance of the class
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.LibreOfficeOdsResultLogger`1.Filename">
+            <summary>
+            The filename of the result logger.
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.LibreOfficeOdsResultLogger`1.TemplateFilename">
+            <summary>
+            A specific filename of the template to save a ods file. 
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.LibreOfficeOdsResultLogger`1.#ctor(`0,System.String,System.String)">
+            <summary>
+            Initialize the ods result logger.
+            </summary>
+            <param name="resultClassInstance">The class instance</param>
+            <param name="resultFilename">The filename to be saved. Do not append the extension filename</param>
+            <param name="templateFilename">The filename of the ods template. Note that this tamplate CANNOT be a password protected file.</param>
+        </member>
+        <member name="M:LoggerManagerLibrary.LibreOfficeOdsResultLogger`1.Init">
+            <summary>
+            Initialize the logger
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.LibreOfficeOdsResultLogger`1.Save">
+            <summary>
+            Save the result logger file
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.LibreOfficeOdsResultLogger`1.HandleExceptions(System.Object,System.Exception)">
+            <summary>
+            A helper function to handle all the exceptions
+            </summary>
+            <param name="sender"></param>
+            <param name="ex"></param>
+        </member>
+        <member name="E:LoggerManagerLibrary.LibreOfficeOdsResultLogger`1.ErrorOccurs">
+            <summary>
+            Fires when an error occurs.
+            </summary>
+        </member>
+        <member name="T:LoggerManagerLibrary.TextFileResultLogger`1">
+            <summary>
+            A result logger with plain text format.
+            </summary>
+            <typeparam name="T">The class type of the result logger.</typeparam>
+        </member>
+        <member name="P:LoggerManagerLibrary.TextFileResultLogger`1.ResultClassInstance">
+            <summary>
+            The instance of the class
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.TextFileResultLogger`1.Filename">
+            <summary>
+            The filename of the result logger.
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.TextFileResultLogger`1.#ctor(`0,System.String,System.String,System.Boolean)">
+            <summary>
+            The constructor
+            </summary>
+            <param name="resultClassInstance">The instance of the class</param>
+            <param name="filename">The filename of the result logger. DO NOT append the filename extension.</param>
+            <param name="filenameExtension">Apply any filename extension you need besides ".txt". </param>
+            <param name="displayColumnNames">Display the name of columns.</param>
+        </member>
+        <member name="M:LoggerManagerLibrary.TextFileResultLogger`1.Init">
+            <summary>
+            Initialize the logger
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.TextFileResultLogger`1.Save">
+            <summary>
+            Save the logger
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.TextFileResultLogger`1.HandleExceptions(System.Object,System.Exception)">
+            <summary>
+            A helper function to handle all the exceptions
+            </summary>
+            <param name="sender"></param>
+            <param name="ex"></param>
+        </member>
+        <member name="E:LoggerManagerLibrary.TextFileResultLogger`1.ErrorOccurs">
+            <summary>
+            Fires whenever an error occurs
+            </summary>
+        </member>
+        <member name="T:LoggerManagerLibrary.SettingsFileFormat">
+            <summary>
+            The enum of all the supported format of the settings loggerss
+            </summary>
+        </member>
+        <member name="F:LoggerManagerLibrary.SettingsFileFormat.JSON">
+            <summary>
+            Use JSON format.
+            </summary>
+        </member>
+        <member name="F:LoggerManagerLibrary.SettingsFileFormat.INI">
+            <summary>
+            Use INI format
+            </summary>
+        </member>
+        <member name="T:LoggerManagerLibrary.IniSettingsLogger`1">
+            <summary>
+            A settings logger with ini format
+            </summary>
+            <typeparam name="TClass">The class type of the settings file</typeparam>
+        </member>
+        <member name="P:LoggerManagerLibrary.IniSettingsLogger`1.SettingsClassInstance">
+            <summary>
+            The instance of the class
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.IniSettingsLogger`1.Filename">
+            <summary>
+            The filename of the settings file
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.IniSettingsLogger`1.Schema">
+            <summary>
+            Of no use.
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.IniSettingsLogger`1.#ctor(System.String)">
+            <summary>
+            The constructor 
+            </summary>
+            <param name="filename">The filename of the settings file. DO NOT append the filename extension.</param>
+        </member>
+        <member name="M:LoggerManagerLibrary.IniSettingsLogger`1.Build">
+            <summary>
+            Build this logger
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.IniSettingsLogger`1.Read">
+            <summary>
+             Read the settings file
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.IniSettingsLogger`1.Save">
+            <summary>
+             Save the settings file
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.IniSettingsLogger`1.HandleExceptions(System.Object,System.Exception)">
+            <summary>
+            A helper function to handle all the exceptions
+            </summary>
+            <param name="sender"></param>
+            <param name="ex"></param>
+        </member>
+        <member name="E:LoggerManagerLibrary.IniSettingsLogger`1.ErrorOccurs">
+            <summary>
+            Fires when an error occurs
+            </summary>
+        </member>
+        <member name="T:LoggerManagerLibrary.JsonSettingsLogger`1">
+            <summary>
+            A settings logger with Json format
+            </summary>
+            <typeparam name="TClass">The class type of the settings file</typeparam>
+        </member>
+        <member name="P:LoggerManagerLibrary.JsonSettingsLogger`1.SettingsClassInstance">
+            <summary>
+            The instance of the class
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.JsonSettingsLogger`1.Filename">
+            <summary>
+            The filename of the settings file
+            </summary>
+        </member>
+        <member name="P:LoggerManagerLibrary.JsonSettingsLogger`1.Schema">
+            <summary>
+            The schema to validate a json file when read. 
+            Refer to Json.NET Schema to see how to specify a schema for JSON file in C#.
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.JsonSettingsLogger`1.#ctor(System.String,System.String)">
+            <summary>
+            The constructor 
+            </summary>
+            <param name="filename">The filename of the settings file. DO NOT append the filename extension.</param>
+            <param name="schema">The schema that will be used to validate the settings file to be read. Leave it null if you don't want to use it.</param>
+        </member>
+        <member name="M:LoggerManagerLibrary.JsonSettingsLogger`1.Build">
+            <summary>
+            Build this logger
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.JsonSettingsLogger`1.Read">
+            <summary>
+             Read the settings file
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.JsonSettingsLogger`1.Save">
+            <summary>
+             Save the settings file
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.JsonSettingsLogger`1.HandleExceptions(System.Object,System.Exception)">
+            <summary>
+            A helper function to handle all the exceptions
+            </summary>
+            <param name="sender"></param>
+            <param name="ex"></param>
+        </member>
+        <member name="E:LoggerManagerLibrary.JsonSettingsLogger`1.ErrorOccurs">
+            <summary>
+            Fires when an error occurs
+            </summary>
+        </member>
+        <member name="T:LoggerManagerLibrary.TaskManager">
+            <summary>
+            Handles anything to do with Tasks
+            </summary>
+        </member>
+        <member name="M:LoggerManagerLibrary.TaskManager.Run(System.Func{System.Threading.Tasks.Task},System.String,System.String,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="function"></param>
+            <param name="origin"></param>
+            <param name="filePath"></param>
+            <param name="lineNumber"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.TaskManager.Run``1(System.Func{System.Threading.Tasks.Task{``0}},System.Threading.CancellationToken,System.String,System.String,System.Int32)">
+            <summary>
+            
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="function"></param>
+            <param name="cancellationToken"></param>
+            <param name="origin"></param>
+            <param name="filePath"></param>
+            <param name="lineNumber"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.TaskManager.Run``1(System.Func{System.Threading.Tasks.Task{``0}},System.String,System.String,System.Int32)">
+            <summary>
+            
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="function"></param>
+            <param name="origin"></param>
+            <param name="filePath"></param>
+            <param name="lineNumber"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.TaskManager.Run``1(System.Func{``0},System.Threading.CancellationToken,System.String,System.String,System.Int32)">
+            <summary>
+            
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="function"></param>
+            <param name="cancellationToken"></param>
+            <param name="origin"></param>
+            <param name="filePath"></param>
+            <param name="lineNumber"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.TaskManager.Run``1(System.Func{``0},System.String,System.String,System.Int32)">
+            <summary>
+            
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="function"></param>
+            <param name="origin"></param>
+            <param name="filePath"></param>
+            <param name="lineNumber"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.TaskManager.Run(System.Func{System.Threading.Tasks.Task},System.Threading.CancellationToken,System.String,System.String,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="function"></param>
+            <param name="cancellationToken"></param>
+            <param name="origin"></param>
+            <param name="filePath"></param>
+            <param name="lineNumber"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.TaskManager.Run(System.Action,System.Threading.CancellationToken,System.String,System.String,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="action"></param>
+            <param name="cancellationToken"></param>
+            <param name="origin"></param>
+            <param name="filePath"></param>
+            <param name="lineNumber"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.TaskManager.Run(System.Action,System.String,System.String,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="action"></param>
+            <param name="origin"></param>
+            <param name="filePath"></param>
+            <param name="lineNumber"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LoggerManagerLibrary.TaskManager.LogError(System.Exception,System.String,System.String,System.Int32)">
+            <summary>
+            Logs the given error to the log factory
+            </summary>
+            <param name="ex">The exception to log</param>
+            <param name="origin">The method/function this message was logged in</param>
+            <param name="filePath">The code filename that this message was logged from</param>
+            <param name="lineNumber">The line of code in the filename this message was logged from</param>
+        </member>
+    </members>
+</doc>
