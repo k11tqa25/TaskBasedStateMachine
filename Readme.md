@@ -8,6 +8,17 @@ Task-Based State Machine 是用來解決一般使用 While + Switch 來做 State
 3.	**提供錯誤處理機制。** 此錯誤處理機制讓此 State Machine 可以在預期或非預期例外發生時，安全結束 State Machine，並且可以做相對應的處理。
 4.	**不同 TBSM 之間串聯。** 當流程過於龐大時，可以拆成許多小的流程再彼此串聯。 便於將流程模組化。
 
+
+# 程式路徑
+
+目前於 SVN 上的位置如下:
+
+**http://yoosap.youngoptics.com/svn/nvs/DotNet Plugin/TaskBasedStateMachine**
+
+此 Library 程式的進入點位於 TaskBasedStateMachine/TaskBasedStateMachineTest/TaskBasedStateMachineTest.sln。為此程式庫的範例。 
+TaskBasedStateMachineLibrary 在編譯後的輸出路徑為 **./OutputDlls**。
+
+
 # 使用說明
 ## DLL 參考
 使用時只需參考 **TaskBasedStateMachineLibrary.dll** 即可。
@@ -28,7 +39,7 @@ Task-Based State Machine 是用來解決一般使用 While + Switch 來做 State
 **註：在 OutputDlls 中另有一個 external 資料夾。 此資料夾是為繪製及輸出 TBSM 的流程圖所用。** 可以將此資料夾複製並匯入您的專案底下，並將其中的所有內容屬性設置為 **一律複製**，或者是直接將此資料夾放置到輸出路徑中，即可輸出流程圖。
 
 
-## 基本使用範例
+## TBSM 建構方法
 
 TBSM 的使用分成三步驟:
 
@@ -65,12 +76,12 @@ TBSM 的使用分成三步驟:
         public CancellationToken cancellationToken { get; set; }
 
 		// 此為自訂義屬性
-        public string StringFromPreivousTask;
+        public string StringFromPreivousTask { get; set; }
 
     }
 
 > **1. IParameterClass 中有兩個需要實作的屬性: NextState 及 CancellationToken**
->> 1.1. **NextState:** 下一個要進入的狀態。 若不指定，則會使用預設的狀態。 (詳見第三步 **定義流程**)。  
+>> 1.1. **NextState:** 下一個要進入的狀態。 若不指定，則會使用預設的狀態。 (若此狀態會根據條件進入不同狀態，則預設狀態為使用 Conditional Flow 的第一個狀態。詳見第三步 **定義流程**)。  
 >> 1.2. **CancellationToken:** 中斷 Task 的物件。 由於 TBSM 是於 C# Task 的基礎上建構，而中斷一個 Task 最好的方法就是使用這個 CancellationToken。 欲指定這個物件，需在外部**先定義一個 CancellationTokenSource**，然後再將此 CancellationTokenSource.Token 傳入至 CancellationToken 即可。
 
 >>
@@ -88,7 +99,7 @@ TBSM 的使用分成三步驟:
 
 >> **註2: TBSM 中會自動把 CancellationToken 傳入所有使用到的 Task**，因此使用時僅需傳入 Token 即可，不需要自訂 Task。
 
-> **2. 常數**。 若再 TBSM 中有需要用到某常數 (比如說 Timeout 次數，預設數值...)，可以在自訂類別中使用 const 來定義。 const 修飾詞的使用方式如下:
+> **2. 常數**。 若在 TBSM 中有需要用到某常數 (比如說 Timeout 次數，預設數值...)，可以在自訂類別中使用 const 來定義。 const 修飾詞的使用方式如下:
  
 >>
 	// 使用常數的方式與一般屬性不同
@@ -209,6 +220,100 @@ TBSM 的使用分成三步驟:
 > 1. **StartWith:** 第一步。 **傳入第一個狀態的狀態名稱**。所有TBSM 物件建立流程的第一步都一定是起始於StartWith 方法，**且只會使用一次**。
 > 2. **FollowedBy:** 下一個狀態。 **傳入下一個狀態的狀態名稱**。
 > 3. **FollowedByASeriesOfTasks:** 接入一串流程。 **傳入另一個已經定義好流程的 TBSM 物件。** 直接在此狀態下接入一串其他定義好的流程，方便模組化。
-> 4. **ConditionalFlow:**
-> 5. **AddHandledExceptionTasks:**
-> 6. **AddUnhandledExceptionTask:**
+> 4. **ConditionalFlow:** 根據條件進入不同狀態。 ConditionalFlow 所引入的參數是一個 **param TaskBasedStateMachineBaseClass[]**。 **註:第一個傳入的TBSM 物件視為預設狀態。** 
+> 5. **AddHandledExceptionTasks:** 加入**所有**預期例外處理狀態。
+> 6. **AddUnhandledExceptionTask:** 傳入非預期例外處理方法。 此方法由於不屬於流程內部的狀態，**因此不需要第二步的SetupTasks中給定，而是直接在此傳入函式本身。**
+
+> 範例:
+>    
+    // define the flow
+    tbsm.StartWith(nameof(A))
+        .FollowedBy(nameof(B))
+        .FollowedBy(nameof(C))
+        .ConditionalFlow(
+    #region First Layor
+            // 1
+            new TaskBasedStateMachineBaseClass().StartWith(nameof(D)).FollowedBy(nameof(G)).FollowedBy(nameof(H)),
+            //2
+            new TaskBasedStateMachineBaseClass().StartWith(nameof(E))
+            .ConditionalFlow(
+    #region Second Layer
+                //2.1
+                new TaskBasedStateMachineBaseClass().StartWith(nameof(I)).FollowedBy(nameof(J)).FollowedBy(nameof(D)),
+                //2.2
+                new TaskBasedStateMachineBaseClass().StartWith(nameof(B)),
+                //2.3
+                new TaskBasedStateMachineBaseClass().StartWith(nameof(C)),
+                //2.4
+                new TaskBasedStateMachineBaseClass().StartWith(nameof(E))
+            ),
+    #endregion Second Layer
+            //3
+            new TaskBasedStateMachineBaseClass().StartWith(nameof(F)).FollowedBy(nameof(A)),
+            //4
+            new TaskBasedStateMachineBaseClass().StartWith(nameof(K)).FollowedBy(nameof(A)),
+            //5 
+            new TaskBasedStateMachineBaseClass().StartWith(nameof(L)).FollowedBy(nameof(A))
+            )
+    #endregion First Layor
+        .AddHandledExceptionTasks(nameof(HandledExceptionTask), nameof(AnotherHandledExceptionTask))
+        .AddUnhandledExceptionTask(ExceptionHandlingTask); // 直接傳入參數本身
+
+## TBSM 使用方法
+
+### 1. 執行 TBSM
+
+>
+TBSM 顧名思義是利用由 C# Task 建立而成的架構，屬於多執行續的範疇。 除了在使用時需要注意其多執行續的問題之外，也要注意此流程在執行時是屬於 **同步執行** 還是 **非同步執行**。
+
+>
+TBSM 執行流程的方法是**呼叫 RunAsync() 方法**。 此方法為 **可等候(awaitable)** 方法。 也就是說，若直接在主執行緒上直接執行 RunAsync()，**此流程將在背景同步執行**。 又由於 Task 為背景執行續的特性，**因此主程式結束後，此背景流程也會被強迫停止**。 若要使用非同步執行，則須在方法前加入一個 await:
+
+>
+	// 一個方法若當中含有 await 修飾子，其本身必須用 async 修飾
+	private async void buttonRun_Click(object sender, EventArgs e)
+    {
+		// 產生一個新的中斷Task 的資源
+        source = new CancellationTokenSource();
+		// 指定此資源的 Token 
+        token = source.Token;
+		// 新增一個自訂參數
+        MyParam p = new MyParam();
+		// 初始化自訂參數
+        p.StringFromPreivousTask = "Initialize";
+        p.cancellationToken = token;
+		// 用 await 修飾 RunAsync 讓執行續等待 tbsm 完成流程。 (詳細運作請查閱 C# async/await 方法)
+        await tbsm.RunAsync(p);
+    }
+
+
+### 2. TBSM 事件註冊
+
+>
+為了方便debug 或做其他用途，TBSM 中提供了以下幾個事件:
+>
+- **Action<(object sender, Exception ex)> OnErrorOccurs**: 例外發生時觸發。 **此事件的參數是一個包含了 sender 及 exception 的 Tuple**。 使用 exception 時可使用 exception.Message 抓出錯誤訊息。
+- **Action<(string currentState, string[] followingStates)> OnStateChanged**: 進入新的狀態時觸發 (若下個狀態與此狀態相同仍會觸發)。 此事件的參數同樣是一個 tuple。 **Tuple 中的第一個物件是目前狀態名稱，第二個則是接續在此事件後的事件**。			
+- **Action OnTaskCourseStarted**: 當 tbsm 開始執行流程是觸發。無事件參數。
+- **Action OnTaskCourseCompleted**: 當 tbsm 結束時觸發。 無事件參數。
+- **Action OnTaskCourseAborted**: 當 tbsm 事件中斷時觸發。 無事件參數。
+
+### 3. TBSM 流程繪製
+>
+當 TBSM 流程建構完後，**可以產生一個流程圖來確認流程是否都接得正確**。
+>>
+**註: 在使用此方法之前，需要確定 external 資料夾及其當中的所有內容物都要在執行目錄底下。**
+>
+產生流程圖的方法為**呼叫 DrawDiagram() 方法**。 此方法有兩個的參數:
+>
+1. **DiagramTitle**: String Type, Optional。 流程圖名稱。 可視為流程圖的檔名。
+2. **Save**: Boolean Type, Optional。 是否存下流程圖。 
+>
+此方法會**回傳 System.Drawing.Image**，可利用此回傳將圖片顯示在應用程式當中。
+
+### 4. TBSM 設定
+
+此版本TBSM 提供兩個設定，直接使 TaskBasedStateMachineLibraryConfiguration 呼叫:
+
+1. **TaskBasedStateMachineLibraryConfiguration.OverrideDebugFile**: 是否覆蓋已有的TBSM 本身的紀錄檔案。
+2. **TaskBasedStateMachineLibraryConfiguration.SaveDebugFile**: 是否存下 TBSM 本身的紀錄檔案。
